@@ -1,0 +1,253 @@
+/* CSS for Energy Status Dashboard */
+
+.energy-status-container {
+  padding: 20px 0;
+}
+
+.energy-status-heading {
+  font-size: 1.8rem;
+  font-weight: 700;
+  margin-bottom: 30px;
+  color: var(--gray-800);
+}
+
+.stats-card {
+  padding: 1.5rem;
+  border-radius: 10px;
+  box-shadow: 0 0.15rem 1.75rem 0 rgba(58, 59, 69, 0.1);
+  margin-bottom: 1.5rem;
+  background-color: #fff;
+  transition: transform 0.3s ease;
+}
+
+.stats-card:hover {
+  transform: translateY(-5px);
+}
+
+.stats-card-title {
+  font-size: 0.9rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  color: var(--gray-600);
+  margin-bottom: 0.5rem;
+}
+
+.stats-card-value {
+  font-size: 2rem;
+  font-weight: 700;
+  color: var(--gray-800);
+}
+
+.stats-card-unit {
+  font-size: 0.9rem;
+  color: var(--gray-600);
+  margin-left: 0.25rem;
+}
+
+.stats-card-trend {
+  font-size: 0.8rem;
+  font-weight: 600;
+  display: flex;
+  align-items: center;
+  margin-top: 0.75rem;
+}
+
+.trend-up {
+  color: var(--danger);
+}
+
+.trend-down {
+  color: var(--success);
+}
+
+.trend-icon {
+  margin-right: 0.25rem;
+}
+
+.consumption-card {
+  background-color: #fff;
+  border-radius: 10px;
+  box-shadow: 0 0.15rem 1.75rem 0 rgba(58, 59, 69, 0.1);
+  padding: 1.5rem;
+  margin-bottom: 1.5rem;
+}
+
+.consumption-card-title {
+  font-size: 1.1rem;
+  font-weight: 700;
+  margin-bottom: 1.5rem;
+  color: var(--gray-800);
+}
+
+.device-status-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+  gap: 1.5rem;
+  margin-top: 1.5rem;
+}
+
+.device-status-card {
+  background-color: #fff;
+  border-radius: 10px;
+  box-shadow: 0 0.15rem 1.75rem 0 rgba(58, 59, 69, 0.1);
+  padding: 1.5rem;
+  transition: all 0.3s ease;
+  position: relative;
+  overflow: hidden;
+}
+
+.device-status-card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 0.5rem 2rem 0 rgba(58, 59, 69, 0.15);
+}
+
+.device-status-card.online {
+  border-left: 4px solid var(--success);
+}
+
+.device-status-card.offline {
+  border-left: 4px solid var(--danger);
+}
+
+.device-status-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1rem;
+}
+
+.device-status-name {
+  font-size: 1.1rem;
+  font-weight: 700;
+  color: var(--gray-800);
+}
+
+.device-status-indicator {
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  display: inline-block;
+}
+
+.indicator-online {
+  background-color: var(--success);
+}
+
+.indicator-offline {
+  background-color: var(--danger);
+}
+
+.device-status-details {
+  margin-top: 1rem;
+}
+
+.device-status-detail {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 0.75rem;
+  font-size: 0.9rem;
+}
+
+.device-status-label {
+  color: var(--gray-600);
+  font-weight: 600;
+}
+
+.device-status-value {
+  font-weight: 700;
+  color: var(--gray-800);
+}
+
+.status-badge {
+  display: inline-block;
+  padding: 0.35em 0.65em;
+  font-size: 0.75em;
+  font-weight: 700;
+  line-height: 1;
+  text-align: center;
+  white-space: nowrap;
+  vertical-align: baseline;
+  border-radius: 0.25rem;
+}
+
+.badge-online {
+  color: #fff;
+  background-color: var(--success);
+}
+
+.badge-offline {
+  color: #fff;
+  background-color: var(--danger);
+}
+
+.live-consumption-chart {
+  height: 400px;
+  margin-top: 1rem;
+}
+
+.chart-legend {
+  display: flex;
+  justify-content: center;
+  flex-wrap: wrap;
+  margin-top: 1rem;
+}
+
+.legend-item {
+  display: flex;
+  align-items: center;
+  margin: 0 1rem 0.5rem 0;
+  font-size: 0.9rem;
+}
+
+.legend-color {
+  width: 14px;
+  height: 14px;
+  border-radius: 3px;
+  margin-right: 0.5rem;
+}
+
+.power-gauge-container {
+  text-align: center;
+  padding: 1rem;
+}
+
+.gauge-value {
+  font-size: 1.8rem;
+  font-weight: 700;
+  margin-top: 0.5rem;
+}
+
+.gauge-label {
+  font-size: 0.9rem;
+  color: var(--gray-600);
+  margin-top: 0.25rem;
+}
+
+.data-refresh-info {
+  font-size: 0.8rem;
+  color: var(--gray-600);
+  text-align: right;
+  margin-top: 1rem;
+}
+
+.data-refresh-time {
+  font-weight: 600;
+}
+
+.energy-overview-container {
+  margin-bottom: 2rem;
+}
+
+@media (max-width: 767.98px) {
+  .device-status-grid {
+    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+  }
+  
+  .stats-card-value {
+    font-size: 1.5rem;
+  }
+  
+  .energy-status-heading {
+    font-size: 1.5rem;
+  }
+}

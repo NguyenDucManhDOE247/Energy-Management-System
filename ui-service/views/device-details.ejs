@@ -1,0 +1,210 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Device Details - EMS</title>
+    <link rel="stylesheet" href="/assets/css/bootstrap.min.css">
+    <link rel="stylesheet" href="/assets/css/styles.css">
+    <link rel="stylesheet" href="/assets/fontawesome/css/all.min.css">
+</head>
+<body>
+    <!-- Navbar -->
+    <%- include('../components/navbar/navbar.php') %>
+
+    <div class="container mt-4">
+        <div class="row">
+            <div class="col-12">
+                <div class="d-flex justify-content-between align-items-center mb-4">
+                    <h2><i class="fas fa-plug"></i> Device Details: <%= device.name %></h2>
+                    <div>
+                        <a href="/devices/<%= device.id %>/history" class="btn btn-info me-2">
+                            <i class="fas fa-history"></i> View Control History
+                        </a>
+                        <a href="/devices" class="btn btn-primary">
+                            <i class="fas fa-arrow-left"></i> Back to Device List
+                        </a>
+                    </div>
+                </div>
+
+                <% if (error) { %>
+                    <div class="alert alert-danger">
+                        <%= error %>
+                    </div>
+                <% } %>
+
+                <div class="row">
+                    <div class="col-md-6">
+                        <div class="card mb-4">
+                            <div class="card-header bg-primary text-white">
+                                <h5 class="mb-0">Device Information</h5>
+                            </div>
+                            <div class="card-body">
+                                <table class="table">
+                                    <tbody>
+                                        <tr>
+                                            <th>Device ID:</th>
+                                            <td><%= device.id %></td>
+                                        </tr>
+                                        <tr>
+                                            <th>Device Name:</th>
+                                            <td><%= device.name %></td>
+                                        </tr>
+                                        <tr>
+                                            <th>Device Type:</th>
+                                            <td><%= device.type %></td>
+                                        </tr>
+                                        <tr>
+                                            <th>IP Address:</th>
+                                            <td><%= device.ip %></td>
+                                        </tr>
+                                        <tr>
+                                            <th>Connection Status:</th>
+                                            <td>
+                                                <% if (device.status && device.status.online) { %>
+                                                    <span class="badge bg-success">Online</span>
+                                                <% } else { %>
+                                                    <span class="badge bg-danger">Offline</span>
+                                                <% } %>
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <th>Device Status:</th>
+                                            <td>
+                                                <% if (device.status && device.status.state) { %>
+                                                    <span class="badge bg-success">ON</span>
+                                                <% } else { %>
+                                                    <span class="badge bg-danger">OFF</span>
+                                                <% } %>
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <th>Last Update:</th>
+                                            <td>
+                                                <% if (device.status && device.status.last_updated) { %>
+                                                    <%= new Date(device.status.last_updated).toLocaleString('en-US') %>
+                                                <% } else { %>
+                                                    No data available
+                                                <% } %>
+                                            </td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                                <div class="d-grid mt-3">
+                                    <button id="toggle-device" class="btn btn-<%= device.status && device.status.state ? 'danger' : 'success' %> btn-lg">
+                                        <i class="fas fa-power-off"></i> 
+                                        <%= device.status && device.status.state ? 'Turn OFF Device' : 'Turn ON Device' %>
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="col-md-6">
+                        <div class="card mb-4">
+                            <div class="card-header bg-primary text-white">
+                                <h5 class="mb-0">Current Data</h5>
+                            </div>
+                            <div class="card-body">
+                                <% if (deviceData) { %>
+                                    <div class="row">
+                                        <div class="col-md-6 mb-3">
+                                            <div class="card bg-light">
+                                                <div class="card-body text-center">
+                                                    <h6 class="card-title">Power</h6>
+                                                    <h3 class="card-text text-primary"><%= deviceData.power %> W</h3>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-6 mb-3">
+                                            <div class="card bg-light">
+                                                <div class="card-body text-center">
+                                                    <h6 class="card-title">Voltage</h6>
+                                                    <h3 class="card-text text-primary"><%= deviceData.voltage %> V</h3>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-6 mb-3">
+                                            <div class="card bg-light">
+                                                <div class="card-body text-center">
+                                                    <h6 class="card-title">Current</h6>
+                                                    <h3 class="card-text text-primary"><%= deviceData.current %> A</h3>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-6 mb-3">
+                                            <div class="card bg-light">
+                                                <div class="card-body text-center">
+                                                    <h6 class="card-title">Energy</h6>
+                                                    <h3 class="card-text text-primary"><%= deviceData.energy %> kWh</h3>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="text-center mt-2">
+                                        <small class="text-muted">Data updated: <%= new Date(deviceData.timestamp).toLocaleString('en-US') %></small>
+                                    </div>
+                                <% } else { %>
+                                    <div class="alert alert-info">
+                                        No current data available for this device.
+                                    </div>
+                                <% } %>
+                            </div>
+                        </div>
+
+                        <div class="card">
+                            <div class="card-header bg-primary text-white">
+                                <h5 class="mb-0">Consumption Statistics</h5>
+                            </div>
+                            <div class="card-body">
+                                <div class="d-flex justify-content-around mb-3">
+                                    <a href="/analytics/daily?device_id=<%= device.id %>" class="btn btn-outline-primary">Daily Statistics</a>
+                                    <a href="/analytics/weekly?device_id=<%= device.id %>" class="btn btn-outline-primary">Weekly Statistics</a>
+                                    <a href="/analytics/monthly?device_id=<%= device.id %>" class="btn btn-outline-primary">Monthly Statistics</a>
+                                </div>
+                                <div id="consumption-chart" style="height: 250px; width: 100%;">
+                                    <!-- Chart will be rendered here -->
+                                    <div class="alert alert-info">
+                                        View detailed energy consumption statistics by clicking on the buttons above.
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="/assets/js/jquery.min.js"></script>
+    <script src="/assets/js/bootstrap.bundle.min.js"></script>
+    <script>
+        $(document).ready(function() {
+            // Toggle device state
+            $('#toggle-device').click(function() {
+                const deviceId = '<%= device.id %>';
+                const currentState = '<%= device.status && device.status.state ? "true" : "false" %>' === 'true';
+                const newState = !currentState;
+                
+                $.ajax({
+                    url: `/api/proxy/devices/${deviceId}/control`,
+                    method: 'POST',
+                    contentType: 'application/json',
+                    data: JSON.stringify({ state: newState }),
+                    success: function(response) {
+                        if (response.success) {
+                            // Reload page to show new state
+                            window.location.reload();
+                        } else {
+                            alert('Unable to control device. Please try again later.');
+                        }
+                    },
+                    error: function() {
+                        alert('Connection error. Please try again later.');
+                    }
+                });
+            });
+        });
+    </script>
+</body>
+</html>

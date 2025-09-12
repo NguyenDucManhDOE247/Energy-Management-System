@@ -1,0 +1,300 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>EMS - Dashboard</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.6.0/dist/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+    <style>
+        .card-stats {
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            transition: transform 0.3s ease;
+        }
+        .card-stats:hover {
+            transform: translateY(-5px);
+        }
+        .bg-gradient-primary {
+            background: linear-gradient(45deg, #4e73df, #224abe);
+        }
+        .bg-gradient-success {
+            background: linear-gradient(45deg, #1cc88a, #13855c);
+        }
+        .bg-gradient-info {
+            background: linear-gradient(45deg, #36b9cc, #258391);
+        }
+        .bg-gradient-warning {
+            background: linear-gradient(45deg, #f6c23e, #dda20a);
+        }
+        .text-white-50 {
+            color: rgba(255, 255, 255, 0.5);
+        }
+        .icon-circle {
+            height: 60px;
+            width: 60px;
+            border-radius: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.8rem;
+            background: rgba(255, 255, 255, 0.1);
+        }
+        .chart-container {
+            height: 300px;
+        }
+    </style>
+</head>
+<body>
+
+<nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+    <a class="navbar-brand" href="/">Energy Monitoring System</a>
+    <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav">
+        <span class="navbar-toggler-icon"></span>
+    </button>
+    <div class="collapse navbar-collapse" id="navbarNav">
+        <ul class="navbar-nav mr-auto">
+            <li class="nav-item active">
+                <a class="nav-link" href="/"><i class="fas fa-tachometer-alt"></i> Dashboard</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" href="/energy-status"><i class="fas fa-bolt"></i> Energy Status</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" href="/database-report"><i class="fas fa-database"></i> Database Report</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" href="/summary"><i class="fas fa-chart-bar"></i> Summary</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" href="/controller"><i class="fas fa-sliders-h"></i> Controller</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" href="/notifications"><i class="fas fa-bell"></i> Notifications</a>
+            </li>
+        </ul>
+        <ul class="navbar-nav">
+            <li class="nav-item">
+                <a class="nav-link" href="/logout"><i class="fas fa-sign-out-alt"></i> Logout</a>
+            </li>
+        </ul>
+    </div>
+</nav>
+
+<div class="container-fluid my-4">
+    <div class="row">
+        <div class="col-md-3 mb-4">
+            <div class="card card-stats text-white bg-gradient-primary">
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col">
+                            <h5 class="card-title text-uppercase mb-0">Total Energy</h5>
+                            <span class="h2 font-weight-bold mb-0">143.5 kWh</span>
+                            <p class="mt-2 mb-0 text-white-50">This Month</p>
+                        </div>
+                        <div class="col-auto">
+                            <div class="icon-circle">
+                                <i class="fas fa-bolt"></i>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3 mb-4">
+            <div class="card card-stats text-white bg-gradient-success">
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col">
+                            <h5 class="card-title text-uppercase mb-0">Cost</h5>
+                            <span class="h2 font-weight-bold mb-0">$21.52</span>
+                            <p class="mt-2 mb-0 text-white-50">This Month</p>
+                        </div>
+                        <div class="col-auto">
+                            <div class="icon-circle">
+                                <i class="fas fa-dollar-sign"></i>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3 mb-4">
+            <div class="card card-stats text-white bg-gradient-info">
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col">
+                            <h5 class="card-title text-uppercase mb-0">Carbon</h5>
+                            <span class="h2 font-weight-bold mb-0">71.8 kg</span>
+                            <p class="mt-2 mb-0 text-white-50">CO2 Emission</p>
+                        </div>
+                        <div class="col-auto">
+                            <div class="icon-circle">
+                                <i class="fas fa-leaf"></i>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3 mb-4">
+            <div class="card card-stats text-white bg-gradient-warning">
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col">
+                            <h5 class="card-title text-uppercase mb-0">Active Devices</h5>
+                            <span class="h2 font-weight-bold mb-0">5/9</span>
+                            <p class="mt-2 mb-0 text-white-50">Online Devices</p>
+                        </div>
+                        <div class="col-auto">
+                            <div class="icon-circle">
+                                <i class="fas fa-plug"></i>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-lg-8 mb-4">
+            <div class="card shadow">
+                <div class="card-header py-3 d-flex flex-row align-items-center justify-content-between">
+                    <h6 class="m-0 font-weight-bold text-primary">Energy Consumption Overview</h6>
+                    <div class="dropdown">
+                        <button class="btn btn-sm btn-outline-secondary dropdown-toggle" type="button" id="dropdownMenuButton" data-toggle="dropdown">
+                            This Week
+                        </button>
+                        <div class="dropdown-menu">
+                            <a class="dropdown-item" href="#">Today</a>
+                            <a class="dropdown-item" href="#">This Week</a>
+                            <a class="dropdown-item" href="#">This Month</a>
+                            <a class="dropdown-item" href="#">This Year</a>
+                        </div>
+                    </div>
+                </div>
+                <div class="card-body">
+                    <div class="chart-container">
+                        <canvas id="energyChart"></canvas>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-lg-4 mb-4">
+            <div class="card shadow">
+                <div class="card-header py-3">
+                    <h6 class="m-0 font-weight-bold text-primary">Device Status</h6>
+                </div>
+                <div class="card-body">
+                    <div class="table-responsive">
+                        <table class="table table-bordered table-hover">
+                            <thead>
+                                <tr>
+                                    <th>Device</th>
+                                    <th>Status</th>
+                                    <th>Power</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <% devices.forEach(function(device) { %>
+                                <tr>
+                                    <td><%= device.name %></td>
+                                    <td>
+                                        <% if (device.status && device.status.online) { %>
+                                            <span class="badge badge-success">Online</span>
+                                        <% } else { %>
+                                            <span class="badge badge-danger">Offline</span>
+                                        <% } %>
+                                    </td>
+                                    <td>
+                                        <% if (device.status && device.status.online) { %>
+                                            <% if (device.status.state) { %>
+                                                <span class="text-success">ON</span>
+                                            <% } else { %>
+                                                <span class="text-danger">OFF</span>
+                                            <% } %>
+                                        <% } else { %>
+                                            <span class="text-muted">-</span>
+                                        <% } %>
+                                    </td>
+                                </tr>
+                                <% }); %>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<footer class="bg-light py-3 mt-auto">
+    <div class="container">
+        <div class="text-center">
+            <span class="text-muted">Energy Monitoring System &copy; 2025</span>
+        </div>
+    </div>
+</footer>
+
+<script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@4.6.0/dist/js/bootstrap.bundle.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/chart.js@3.7.0/dist/chart.min.js"></script>
+<script>
+    // Sample chart data
+    const ctx = document.getElementById('energyChart').getContext('2d');
+    const energyChart = new Chart(ctx, {
+        type: 'line',
+        data: {
+            labels: ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'],
+            datasets: [{
+                label: 'Energy Consumption (kWh)',
+                data: [5.2, 4.8, 6.3, 5.7, 7.1, 8.5, 6.9],
+                backgroundColor: 'rgba(78, 115, 223, 0.05)',
+                borderColor: 'rgba(78, 115, 223, 1)',
+                borderWidth: 2,
+                pointBackgroundColor: 'rgba(78, 115, 223, 1)',
+                pointBorderColor: '#fff',
+                pointHoverBackgroundColor: '#fff',
+                pointHoverBorderColor: 'rgba(78, 115, 223, 1)',
+                tension: 0.3
+            }]
+        },
+        options: {
+            maintainAspectRatio: false,
+            plugins: {
+                legend: {
+                    display: false
+                }
+            },
+            scales: {
+                y: {
+                    beginAtZero: true,
+                    grid: {
+                        drawBorder: false
+                    }
+                },
+                x: {
+                    grid: {
+                        display: false
+                    }
+                }
+            }
+        }
+    });
+
+    // Refresh data every 60 seconds
+    setInterval(function() {
+        $.get('/api/proxy/data/current', function(data) {
+            console.log('Updated data:', data);
+            // Update UI with fresh data
+        });
+
+        $.get('/api/proxy/devices', function(data) {
+            console.log('Updated devices:', data);
+            // Update device status table
+        });
+    }, 60000);
+</script>
+</body>
+</html>

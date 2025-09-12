@@ -1,0 +1,366 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>EMS - Register</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.6.0/dist/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+    <style>
+        body {
+            min-height: 100vh;
+            background: linear-gradient(135deg, #4e73df 0%, #224abe 100%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 30px 0;
+        }
+        .register-container {
+            max-width: 500px;
+            width: 100%;
+            padding: 30px;
+            background-color: #fff;
+            border-radius: 10px;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+        }
+        .logo {
+            text-align: center;
+            margin-bottom: 25px;
+        }
+        .logo img {
+            width: 70px;
+            height: 70px;
+        }
+        .logo h3 {
+            margin-top: 15px;
+            font-weight: 700;
+            color: #5a5c69;
+        }
+        .form-group {
+            margin-bottom: 20px;
+        }
+        .form-group label {
+            font-weight: 600;
+            color: #5a5c69;
+            margin-bottom: 8px;
+        }
+        .form-control {
+            height: 45px;
+            padding: 10px 15px;
+            border-radius: 5px;
+            border: 1px solid #d1d3e2;
+        }
+        .form-control:focus {
+            border-color: #4e73df;
+            box-shadow: 0 0 0 0.2rem rgba(78, 115, 223, 0.25);
+        }
+        .btn-register {
+            height: 45px;
+            font-weight: 600;
+            border-radius: 5px;
+            background-color: #4e73df;
+            border-color: #4e73df;
+        }
+        .btn-register:hover {
+            background-color: #2e59d9;
+            border-color: #2653d4;
+        }
+        .divider {
+            position: relative;
+            text-align: center;
+            margin: 25px 0;
+        }
+        .divider span {
+            display: inline-block;
+            padding: 0 15px;
+            background-color: #fff;
+            position: relative;
+            z-index: 1;
+            color: #b7b9cc;
+        }
+        .divider:before {
+            content: "";
+            position: absolute;
+            top: 50%;
+            left: 0;
+            right: 0;
+            border-top: 1px solid #eaecf4;
+            z-index: 0;
+        }
+        .social-register {
+            display: flex;
+            gap: 15px;
+        }
+        .social-btn {
+            flex: 1;
+            height: 45px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 5px;
+            color: white;
+            font-weight: 600;
+            text-decoration: none;
+            transition: all 0.2s ease;
+        }
+        .social-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+            color: white;
+            text-decoration: none;
+        }
+        .google-btn {
+            background-color: #EA4335;
+        }
+        .github-btn {
+            background-color: #24292E;
+        }
+        .login-link {
+            text-align: center;
+            margin-top: 25px;
+            color: #858796;
+            font-size: 14px;
+        }
+        .login-link a {
+            color: #4e73df;
+            font-weight: 600;
+            text-decoration: none;
+        }
+        .login-link a:hover {
+            text-decoration: underline;
+        }
+        .alert {
+            border-radius: 5px;
+            padding: 15px;
+            margin-bottom: 20px;
+        }
+        .password-strength {
+            margin-top: 8px;
+            height: 5px;
+            border-radius: 2px;
+            background-color: #eaecf4;
+            overflow: hidden;
+        }
+        .password-strength-meter {
+            height: 100%;
+            width: 0;
+            transition: width 0.3s ease;
+        }
+        .password-strength-text {
+            font-size: 12px;
+            margin-top: 5px;
+        }
+        .strength-weak {
+            background-color: #e74a3b;
+        }
+        .strength-medium {
+            background-color: #f6c23e;
+        }
+        .strength-strong {
+            background-color: #1cc88a;
+        }
+    </style>
+</head>
+<body>
+    <div class="register-container">
+        <div class="logo">
+            <img src="/assets/icons/power.png" alt="EMS Logo">
+            <h3>Create an Account</h3>
+        </div>
+        
+        <% if (typeof error !== 'undefined' && error) { %>
+            <div class="alert alert-danger" role="alert">
+                <i class="fas fa-exclamation-triangle mr-2"></i> <%= error %>
+            </div>
+        <% } %>
+        
+        <form action="/register" method="POST" id="registerForm">
+            <div class="row">
+                <div class="col-md-6">
+                    <div class="form-group">
+                        <label for="firstName">First Name</label>
+                        <input type="text" class="form-control" id="firstName" name="firstName" placeholder="Enter first name" required>
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="form-group">
+                        <label for="lastName">Last Name</label>
+                        <input type="text" class="form-control" id="lastName" name="lastName" placeholder="Enter last name" required>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="form-group">
+                <label for="email">Email</label>
+                <div class="input-group">
+                    <div class="input-group-prepend">
+                        <span class="input-group-text">
+                            <i class="fas fa-envelope"></i>
+                        </span>
+                    </div>
+                    <input type="email" class="form-control" id="email" name="email" placeholder="Enter your email" required>
+                </div>
+            </div>
+            
+            <div class="form-group">
+                <label for="username">Username</label>
+                <div class="input-group">
+                    <div class="input-group-prepend">
+                        <span class="input-group-text">
+                            <i class="fas fa-user"></i>
+                        </span>
+                    </div>
+                    <input type="text" class="form-control" id="username" name="username" placeholder="Choose a username" required>
+                </div>
+            </div>
+            
+            <div class="form-group">
+                <label for="password">Password</label>
+                <div class="input-group">
+                    <div class="input-group-prepend">
+                        <span class="input-group-text">
+                            <i class="fas fa-lock"></i>
+                        </span>
+                    </div>
+                    <input type="password" class="form-control" id="password" name="password" placeholder="Create a password" required>
+                    <div class="input-group-append">
+                        <span class="input-group-text password-toggle" role="button">
+                            <i class="fas fa-eye"></i>
+                        </span>
+                    </div>
+                </div>
+                <div class="password-strength">
+                    <div class="password-strength-meter"></div>
+                </div>
+                <div class="password-strength-text text-muted">Password strength: Enter a password</div>
+            </div>
+            
+            <div class="form-group">
+                <label for="confirmPassword">Confirm Password</label>
+                <div class="input-group">
+                    <div class="input-group-prepend">
+                        <span class="input-group-text">
+                            <i class="fas fa-lock"></i>
+                        </span>
+                    </div>
+                    <input type="password" class="form-control" id="confirmPassword" name="confirmPassword" placeholder="Confirm your password" required>
+                </div>
+            </div>
+            
+            <div class="form-group form-check">
+                <input type="checkbox" class="form-check-input" id="termsAgreement" name="termsAgreement" required>
+                <label class="form-check-label" for="termsAgreement">
+                    I agree to the <a href="/terms" target="_blank">Terms of Service</a> and <a href="/privacy" target="_blank">Privacy Policy</a>
+                </label>
+            </div>
+            
+            <button type="submit" class="btn btn-primary btn-block btn-register">
+                <i class="fas fa-user-plus mr-2"></i> Register
+            </button>
+        </form>
+        
+        <div class="divider">
+            <span>OR</span>
+        </div>
+        
+        <div class="social-register">
+            <a href="/auth/google" class="social-btn google-btn">
+                <i class="fab fa-google mr-2"></i> Google
+            </a>
+            <a href="/auth/github" class="social-btn github-btn">
+                <i class="fab fa-github mr-2"></i> GitHub
+            </a>
+        </div>
+        
+        <div class="login-link">
+            Already have an account? <a href="/login">Login</a>
+        </div>
+    </div>
+    
+    <script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.6.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        $(document).ready(function() {
+            // Password toggle visibility
+            $('.password-toggle').on('click', function() {
+                const passwordInput = $(this).closest('.input-group').find('input');
+                const icon = $(this).find('i');
+                
+                if (passwordInput.attr('type') === 'password') {
+                    passwordInput.attr('type', 'text');
+                    icon.removeClass('fa-eye').addClass('fa-eye-slash');
+                } else {
+                    passwordInput.attr('type', 'password');
+                    icon.removeClass('fa-eye-slash').addClass('fa-eye');
+                }
+            });
+            
+            // Password strength meter
+            $('#password').on('input', function() {
+                const password = $(this).val();
+                const meter = $('.password-strength-meter');
+                const text = $('.password-strength-text');
+                
+                // Remove existing strength classes
+                meter.removeClass('strength-weak strength-medium strength-strong');
+                
+                if (password.length === 0) {
+                    meter.css('width', '0');
+                    text.text('Password strength: Enter a password');
+                    return;
+                }
+                
+                // Calculate password strength
+                let strength = 0;
+                
+                // Length check
+                if (password.length >= 8) strength += 1;
+                if (password.length >= 12) strength += 1;
+                
+                // Complexity checks
+                if (/[A-Z]/.test(password)) strength += 1;
+                if (/[a-z]/.test(password)) strength += 1;
+                if (/[0-9]/.test(password)) strength += 1;
+                if (/[^A-Za-z0-9]/.test(password)) strength += 1;
+                
+                // Update meter
+                if (strength <= 2) {
+                    meter.addClass('strength-weak');
+                    meter.css('width', '33%');
+                    text.text('Password strength: Weak');
+                    text.removeClass('text-warning text-success').addClass('text-danger');
+                } else if (strength <= 4) {
+                    meter.addClass('strength-medium');
+                    meter.css('width', '66%');
+                    text.text('Password strength: Medium');
+                    text.removeClass('text-danger text-success').addClass('text-warning');
+                } else {
+                    meter.addClass('strength-strong');
+                    meter.css('width', '100%');
+                    text.text('Password strength: Strong');
+                    text.removeClass('text-danger text-warning').addClass('text-success');
+                }
+            });
+            
+            // Form validation
+            $('#registerForm').on('submit', function(e) {
+                const password = $('#password').val();
+                const confirmPassword = $('#confirmPassword').val();
+                
+                if (password !== confirmPassword) {
+                    e.preventDefault();
+                    alert('Passwords do not match');
+                    $('#confirmPassword').focus();
+                }
+            });
+            
+            // Auto-dismiss alerts after 5 seconds
+            setTimeout(function() {
+                $(".alert").fadeTo(500, 0).slideUp(500, function() {
+                    $(this).remove();
+                });
+            }, 5000);
+        });
+    </script>
+</body>
+</html>

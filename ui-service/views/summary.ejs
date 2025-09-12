@@ -1,0 +1,768 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>EMS - Summary</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.6.0/dist/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+    <style>
+        .card {
+            box-shadow: 0 0.15rem 1.75rem 0 rgba(58, 59, 69, 0.1);
+            border: none;
+            border-radius: 0.35rem;
+            margin-bottom: 1.5rem;
+        }
+        .card-header {
+            background-color: #f8f9fc;
+            border-bottom: 1px solid #e3e6f0;
+        }
+        .border-left-primary {
+            border-left: 0.25rem solid #4e73df !important;
+        }
+        .border-left-success {
+            border-left: 0.25rem solid #1cc88a !important;
+        }
+        .border-left-info {
+            border-left: 0.25rem solid #36b9cc !important;
+        }
+        .border-left-warning {
+            border-left: 0.25rem solid #f6c23e !important;
+        }
+        .border-left-danger {
+            border-left: 0.25rem solid #e74a3b !important;
+        }
+        .text-xs {
+            font-size: .7rem;
+        }
+        .text-primary {
+            color: #4e73df !important;
+        }
+        .text-success {
+            color: #1cc88a !important;
+        }
+        .text-info {
+            color: #36b9cc !important;
+        }
+        .text-warning {
+            color: #f6c23e !important;
+        }
+        .text-danger {
+            color: #e74a3b !important;
+        }
+        .bg-gradient-primary {
+            background-color: #4e73df;
+            background-image: linear-gradient(180deg, #4e73df 10%, #224abe 100%);
+            background-size: cover;
+        }
+        .chart-container {
+            position: relative;
+            height: 300px;
+            margin-bottom: 20px;
+        }
+        .table-filters {
+            margin-bottom: 1rem;
+        }
+        .daterange-container {
+            position: relative;
+        }
+        .daterange-container i {
+            position: absolute;
+            right: 10px;
+            top: 10px;
+        }
+        .full-height-card {
+            height: calc(100% - 1.5rem);
+        }
+        .time-period-selector {
+            background-color: #f8f9fc;
+            border-radius: 0.35rem;
+            padding: 15px;
+            margin-bottom: 20px;
+        }
+        .time-period-selector .btn-group {
+            width: 100%;
+        }
+        .time-period-selector .btn {
+            flex: 1;
+        }
+        .comparison-badge {
+            font-size: 80%;
+            padding: 0.25em 0.6em;
+            margin-left: 0.5rem;
+            vertical-align: middle;
+        }
+        .progress {
+            height: 0.5rem;
+            margin-bottom: 0.5rem;
+        }
+        .info-tooltip {
+            color: #858796;
+            margin-left: 0.25rem;
+            cursor: help;
+        }
+    </style>
+</head>
+<body>
+
+<nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+    <a class="navbar-brand" href="/">Energy Monitoring System</a>
+    <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav">
+        <span class="navbar-toggler-icon"></span>
+    </button>
+    <div class="collapse navbar-collapse" id="navbarNav">
+        <ul class="navbar-nav mr-auto">
+            <li class="nav-item">
+                <a class="nav-link" href="/"><i class="fas fa-tachometer-alt"></i> Dashboard</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" href="/energy-status"><i class="fas fa-bolt"></i> Energy Status</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" href="/database-report"><i class="fas fa-database"></i> Database Report</a>
+            </li>
+            <li class="nav-item active">
+                <a class="nav-link" href="/summary"><i class="fas fa-chart-bar"></i> Summary</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" href="/controller"><i class="fas fa-sliders-h"></i> Controller</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" href="/notifications"><i class="fas fa-bell"></i> Notifications</a>
+            </li>
+        </ul>
+        <ul class="navbar-nav">
+            <li class="nav-item">
+                <a class="nav-link" href="/logout"><i class="fas fa-sign-out-alt"></i> Logout</a>
+            </li>
+        </ul>
+    </div>
+</nav>
+
+<div class="container-fluid my-4">
+    <div class="d-sm-flex align-items-center justify-content-between mb-4">
+        <h1 class="h3 mb-0 text-gray-800">Energy Consumption Summary</h1>
+        <div>
+            <button id="printReport" class="d-none d-sm-inline-block btn btn-sm btn-info shadow-sm mr-2">
+                <i class="fas fa-print fa-sm text-white-50 mr-1"></i> Print Report
+            </button>
+            <button id="exportPDF" class="d-none d-sm-inline-block btn btn-sm btn-primary shadow-sm">
+                <i class="fas fa-file-pdf fa-sm text-white-50 mr-1"></i> Export PDF
+            </button>
+        </div>
+    </div>
+
+    <div class="time-period-selector shadow-sm">
+        <div class="row align-items-center">
+            <div class="col-md-3 mb-3 mb-md-0">
+                <div class="input-group daterange-container">
+                    <input type="text" class="form-control" id="dateRangePicker" value="<%= typeof startDate !== 'undefined' ? startDate : '' %> - <%= typeof endDate !== 'undefined' ? endDate : '' %>">
+                    <div class="input-group-append">
+                        <span class="input-group-text"><i class="fas fa-calendar-alt"></i></span>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-6 mb-3 mb-md-0">
+                <div class="btn-group" role="group">
+                    <button type="button" class="btn btn-outline-primary" data-period="day">Day</button>
+                    <button type="button" class="btn btn-outline-primary active" data-period="week">Week</button>
+                    <button type="button" class="btn btn-outline-primary" data-period="month">Month</button>
+                    <button type="button" class="btn btn-outline-primary" data-period="quarter">Quarter</button>
+                    <button type="button" class="btn btn-outline-primary" data-period="year">Year</button>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <button id="updateReport" class="btn btn-primary btn-block">Update Report</button>
+            </div>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-xl-3 col-md-6 mb-4">
+            <div class="card border-left-primary shadow h-100 py-2">
+                <div class="card-body">
+                    <div class="row no-gutters align-items-center">
+                        <div class="col mr-2">
+                            <div class="text-xs font-weight-bold text-primary text-uppercase mb-1">Total Energy Consumption</div>
+                            <div class="h5 mb-0 font-weight-bold text-gray-800">
+                                <%= typeof totalEnergy !== 'undefined' ? totalEnergy : '0' %> kWh
+                                <span class="badge badge-success comparison-badge">
+                                    <i class="fas fa-arrow-down"></i> 12%
+                                </span>
+                            </div>
+                        </div>
+                        <div class="col-auto">
+                            <i class="fas fa-bolt fa-2x text-gray-300"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-xl-3 col-md-6 mb-4">
+            <div class="card border-left-success shadow h-100 py-2">
+                <div class="card-body">
+                    <div class="row no-gutters align-items-center">
+                        <div class="col mr-2">
+                            <div class="text-xs font-weight-bold text-success text-uppercase mb-1">Estimated Cost</div>
+                            <div class="h5 mb-0 font-weight-bold text-gray-800">
+                                $<%= typeof estimatedCost !== 'undefined' ? estimatedCost : '0' %>
+                                <span class="badge badge-success comparison-badge">
+                                    <i class="fas fa-arrow-down"></i> 8%
+                                </span>
+                            </div>
+                        </div>
+                        <div class="col-auto">
+                            <i class="fas fa-dollar-sign fa-2x text-gray-300"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-xl-3 col-md-6 mb-4">
+            <div class="card border-left-info shadow h-100 py-2">
+                <div class="card-body">
+                    <div class="row no-gutters align-items-center">
+                        <div class="col mr-2">
+                            <div class="text-xs font-weight-bold text-info text-uppercase mb-1">Energy Efficiency</div>
+                            <div class="row no-gutters align-items-center">
+                                <div class="col-auto">
+                                    <div class="h5 mb-0 mr-3 font-weight-bold text-gray-800"><%= typeof efficiencyRating !== 'undefined' ? efficiencyRating : '0' %>%</div>
+                                </div>
+                                <div class="col">
+                                    <div class="progress progress-sm mr-2">
+                                        <div class="progress-bar bg-info" role="progressbar" style="width: <%= typeof efficiencyRating !== 'undefined' ? efficiencyRating : '0' %>%" aria-valuenow="<%= typeof efficiencyRating !== 'undefined' ? efficiencyRating : '0' %>" aria-valuemin="0" aria-valuemax="100"></div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-auto">
+                            <i class="fas fa-tachometer-alt fa-2x text-gray-300"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-xl-3 col-md-6 mb-4">
+            <div class="card border-left-warning shadow h-100 py-2">
+                <div class="card-body">
+                    <div class="row no-gutters align-items-center">
+                        <div class="col mr-2">
+                            <div class="text-xs font-weight-bold text-warning text-uppercase mb-1">Peak Power Demand</div>
+                            <div class="h5 mb-0 font-weight-bold text-gray-800">
+                                <%= typeof peakPower !== 'undefined' ? peakPower : '0' %> W
+                                <span class="badge badge-danger comparison-badge">
+                                    <i class="fas fa-arrow-up"></i> 5%
+                                </span>
+                            </div>
+                        </div>
+                        <div class="col-auto">
+                            <i class="fas fa-chart-line fa-2x text-gray-300"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-xl-8 col-lg-7">
+            <div class="card shadow mb-4">
+                <div class="card-header py-3 d-flex flex-row align-items-center justify-content-between">
+                    <h6 class="m-0 font-weight-bold text-primary">Energy Consumption Overview</h6>
+                    <div class="dropdown no-arrow">
+                        <a class="dropdown-toggle" href="#" role="button" id="dropdownMenuLink" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                            <i class="fas fa-ellipsis-v fa-sm fa-fw text-gray-400"></i>
+                        </a>
+                        <div class="dropdown-menu dropdown-menu-right shadow animated--fade-in" aria-labelledby="dropdownMenuLink">
+                            <div class="dropdown-header">Chart Options:</div>
+                            <a class="dropdown-item active" href="#" data-chart-type="bar">Bar Chart</a>
+                            <a class="dropdown-item" href="#" data-chart-type="line">Line Chart</a>
+                            <a class="dropdown-item" href="#" data-chart-type="area">Area Chart</a>
+                            <div class="dropdown-divider"></div>
+                            <a class="dropdown-item" href="#" data-chart-value="energy">Show Energy (kWh)</a>
+                            <a class="dropdown-item" href="#" data-chart-value="cost">Show Cost ($)</a>
+                        </div>
+                    </div>
+                </div>
+                <div class="card-body">
+                    <div class="chart-container">
+                        <canvas id="consumptionChart"></canvas>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-xl-4 col-lg-5">
+            <div class="card shadow mb-4">
+                <div class="card-header py-3 d-flex flex-row align-items-center justify-content-between">
+                    <h6 class="m-0 font-weight-bold text-primary">Energy Distribution</h6>
+                    <div class="dropdown no-arrow">
+                        <a class="dropdown-toggle" href="#" role="button" id="dropdownMenuLink2" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                            <i class="fas fa-ellipsis-v fa-sm fa-fw text-gray-400"></i>
+                        </a>
+                        <div class="dropdown-menu dropdown-menu-right shadow animated--fade-in" aria-labelledby="dropdownMenuLink2">
+                            <div class="dropdown-header">View Options:</div>
+                            <a class="dropdown-item active" href="#" data-distribution="device">By Device</a>
+                            <a class="dropdown-item" href="#" data-distribution="time">By Time of Day</a>
+                            <a class="dropdown-item" href="#" data-distribution="day">By Day of Week</a>
+                        </div>
+                    </div>
+                </div>
+                <div class="card-body">
+                    <div class="chart-container">
+                        <canvas id="distributionChart"></canvas>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-lg-6 mb-4">
+            <div class="card shadow mb-4 full-height-card">
+                <div class="card-header py-3">
+                    <h6 class="m-0 font-weight-bold text-primary">Device Energy Usage</h6>
+                </div>
+                <div class="card-body">
+                    <div class="table-responsive">
+                        <table class="table table-bordered" width="100%" cellspacing="0">
+                            <thead>
+                                <tr>
+                                    <th>Device</th>
+                                    <th>Energy (kWh)</th>
+                                    <th>Cost ($)</th>
+                                    <th>% of Total</th>
+                                    <th>Trend</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <% if (typeof deviceStats !== 'undefined' && deviceStats.length > 0) { %>
+                                    <% deviceStats.forEach(function(device) { %>
+                                    <tr>
+                                        <td><%= device.name %></td>
+                                        <td><%= device.energy.toFixed(2) %></td>
+                                        <td>$<%= typeof device.cost !== 'undefined' ? device.cost.toFixed(2) : '0.00' %></td>
+                                        <td>
+                                            <div class="progress">
+                                                <div class="progress-bar bg-primary" role="progressbar" style="width: <%= device.percentage %>%" aria-valuenow="<%= device.percentage %>" aria-valuemin="0" aria-valuemax="100"></div>
+                                            </div>
+                                            <small><%= device.percentage %>%</small>
+                                        </td>
+                                        <td>
+                                            <% if (typeof device.trend !== 'undefined') { %>
+                                                <% if (device.trend > 0) { %>
+                                                    <span class="text-danger"><i class="fas fa-arrow-up"></i> <%= device.trend %>%</span>
+                                                <% } else if (device.trend < 0) { %>
+                                                    <span class="text-success"><i class="fas fa-arrow-down"></i> <%= Math.abs(device.trend) %>%</span>
+                                                <% } else { %>
+                                                    <span class="text-muted"><i class="fas fa-equals"></i> 0%</span>
+                                                <% } %>
+                                            <% } else { %>
+                                                <span class="text-muted"><i class="fas fa-equals"></i> 0%</span>
+                                            <% } %>
+                                        </td>
+                                    </tr>
+                                    <% }); %>
+                                <% } else { %>
+                                    <tr>
+                                        <td colspan="5" class="text-center">No device data</td>
+                                    </tr>
+                                <% } %>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-lg-6 mb-4">
+            <div class="card shadow mb-4">
+                <div class="card-header py-3">
+                    <h6 class="m-0 font-weight-bold text-primary">Usage Patterns</h6>
+                </div>
+                <div class="card-body">
+                    <div class="chart-container">
+                        <canvas id="patternChart"></canvas>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="card shadow mb-4">
+                <div class="card-header py-3">
+                    <h6 class="m-0 font-weight-bold text-primary">Energy Saving Recommendations</h6>
+                </div>
+                <div class="card-body">
+                    <div class="mb-3">
+                        <h5 class="small font-weight-bold">Schedule high-energy devices outside peak hours <span class="float-right">Est. Savings: $12.40/month</span></h5>
+                        <p class="text-muted small">Your data shows heavy usage between 6-8 PM. Consider scheduling device operation outside these hours.</p>
+                    </div>
+                    <div class="mb-3">
+                        <h5 class="small font-weight-bold">Optimize Device 3 usage <span class="float-right">Est. Savings: $8.75/month</span></h5>
+                        <p class="text-muted small">This device consumes 25% more energy than similar devices. Consider checking for maintenance issues.</p>
+                    </div>
+                    <div class="mb-3">
+                        <h5 class="small font-weight-bold">Standby power reduction <span class="float-right">Est. Savings: $5.20/month</span></h5>
+                        <p class="text-muted small">Several devices show significant power usage even when not in active use. Consider using smart plugs to fully power off.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<footer class="bg-light py-3 mt-auto">
+    <div class="container">
+        <div class="text-center">
+            <span class="text-muted">Energy Monitoring System &copy; 2025</span>
+        </div>
+    </div>
+</footer>
+
+<script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@4.6.0/dist/js/bootstrap.bundle.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/chart.js@3.7.0/dist/chart.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/moment@2.29.1/moment.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/daterangepicker@3.1.0/daterangepicker.min.js"></script>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/daterangepicker@3.1.0/daterangepicker.css">
+
+<script>
+    $(document).ready(function() {
+        // Initialize DateRangePicker
+        $('#dateRangePicker').daterangepicker({
+            startDate: moment().subtract(7, 'days'),
+            endDate: moment(),
+            ranges: {
+               'Today': [moment(), moment()],
+               'Yesterday': [moment().subtract(1, 'days'), moment().subtract(1, 'days')],
+               'Last 7 Days': [moment().subtract(6, 'days'), moment()],
+               'Last 30 Days': [moment().subtract(29, 'days'), moment()],
+               'This Month': [moment().startOf('month'), moment().endOf('month')],
+               'Last Month': [moment().subtract(1, 'month').startOf('month'), moment().subtract(1, 'month').endOf('month')]
+            }
+        }, function(start, end, label) {
+            // When user selects a date range, update the data
+            updateDataForDateRange(start.format('YYYY-MM-DD'), end.format('YYYY-MM-DD'));
+        });
+
+        // Function to update data when date range changes
+        function updateDataForDateRange(startDate, endDate) {
+            window.location.href = `/summary?from=${startDate}&to=${endDate}`;
+        }
+        
+        // Period selector buttons
+        $('.btn-group button').on('click', function() {
+            $('.btn-group button').removeClass('active');
+            $(this).addClass('active');
+            
+            const period = $(this).data('period');
+            let startDate, endDate;
+            
+            switch(period) {
+                case 'day':
+                    startDate = moment().startOf('day');
+                    endDate = moment().endOf('day');
+                    break;
+                case 'week':
+                    startDate = moment().subtract(6, 'days');
+                    endDate = moment();
+                    break;
+                case 'month':
+                    startDate = moment().subtract(29, 'days');
+                    endDate = moment();
+                    break;
+                case 'quarter':
+                    startDate = moment().subtract(89, 'days');
+                    endDate = moment();
+                    break;
+                case 'year':
+                    startDate = moment().subtract(364, 'days');
+                    endDate = moment();
+                    break;
+            }
+            
+            $('#dateRangePicker').data('daterangepicker').setStartDate(startDate);
+            $('#dateRangePicker').data('daterangepicker').setEndDate(endDate);
+        });
+
+            // Initialize consumption chart
+        const consumptionCtx = document.getElementById('consumptionChart').getContext('2d');
+        let labels = [];
+        let energyData = [];
+        
+        // Safely convert server-side data to client-side variables
+        try {
+            labels = JSON.parse('<%= JSON.stringify(timeLabels || []) %>'.replace(/&quot;/g, '"').replace(/&#34;/g, '"'));
+            energyData = JSON.parse('<%= JSON.stringify(energyValues || []) %>'.replace(/&quot;/g, '"').replace(/&#34;/g, '"'));
+        } catch (e) {
+            console.error('Error parsing chart data:', e);
+            // Provide fallback data
+            labels = Array.from({length: 7}, (_, i) => moment().subtract(6-i, 'days').format('DD/MM'));
+            energyData = Array.from({length: 7}, () => Math.random() * 10 + 5);
+        }        const costData = energyData.map(value => (value * 0.15).toFixed(2)); // Example calculation
+        
+        const consumptionChart = new Chart(consumptionCtx, {
+            type: 'bar',
+            data: {
+                labels: labels,
+                datasets: [{
+                    label: 'Energy (kWh)',
+                    backgroundColor: 'rgba(78, 115, 223, 0.6)',
+                    borderColor: 'rgba(78, 115, 223, 1)',
+                    borderWidth: 1,
+                    data: energyData
+                }]
+            },
+            options: {
+                maintainAspectRatio: false,
+                scales: {
+                    y: {
+                        beginAtZero: true,
+                        ticks: {
+                            callback: function(value) {
+                                return value + ' kWh';
+                            }
+                        }
+                    }
+                },
+                plugins: {
+                    tooltip: {
+                        callbacks: {
+                            label: function(context) {
+                                let label = context.dataset.label || '';
+                                if (label) {
+                                    label += ': ';
+                                }
+                                if (context.parsed.y !== null) {
+                                    label += context.parsed.y + ' kWh';
+                                }
+                                return label;
+                            }
+                        }
+                    }
+                }
+            }
+        });
+
+        // Chart type switcher
+        $('[data-chart-type]').on('click', function(e) {
+            e.preventDefault();
+            $('[data-chart-type]').removeClass('active');
+            $(this).addClass('active');
+            
+            const chartType = $(this).data('chart-type');
+            consumptionChart.config.type = chartType === 'area' ? 'line' : chartType;
+            
+            if (chartType === 'area') {
+                consumptionChart.data.datasets[0].fill = true;
+            } else {
+                consumptionChart.data.datasets[0].fill = false;
+            }
+            
+            consumptionChart.update();
+        });
+
+        // Chart value switcher
+        $('[data-chart-value]').on('click', function(e) {
+            e.preventDefault();
+            $('[data-chart-value]').removeClass('active');
+            $(this).addClass('active');
+            
+            const dataType = $(this).data('chart-value');
+            
+            if (dataType === 'energy') {
+                consumptionChart.data.datasets[0].label = 'Energy (kWh)';
+                consumptionChart.data.datasets[0].data = energyData;
+                consumptionChart.options.scales.y.ticks.callback = function(value) {
+                    return value + ' kWh';
+                };
+            } else {
+                consumptionChart.data.datasets[0].label = 'Cost ($)';
+                consumptionChart.data.datasets[0].data = costData;
+                consumptionChart.options.scales.y.ticks.callback = function(value) {
+                    return '$' + value;
+                };
+            }
+            
+            consumptionChart.update();
+        });
+
+        // Initialize distribution chart
+        const distributionCtx = document.getElementById('distributionChart').getContext('2d');
+        let deviceLabels = [];
+        let deviceData = [];
+        
+        // Safely convert server-side device data to client-side variables
+        try {
+            let deviceStatsString = '<%= JSON.stringify(deviceStats || []) %>'.replace(/&quot;/g, '"');
+            let deviceStatsParsed = JSON.parse(deviceStatsString);
+            
+            if (deviceStatsParsed && deviceStatsParsed.length > 0) {
+                deviceLabels = deviceStatsParsed.map(d => d.name);
+                deviceData = deviceStatsParsed.map(d => d.energy);
+            }
+        } catch (e) {
+            console.error('Error parsing device data:', e);
+        }
+        
+        const distributionChart = new Chart(distributionCtx, {
+            type: 'doughnut',
+            data: {
+                labels: deviceLabels,
+                datasets: [{
+                    data: deviceData,
+                    backgroundColor: [
+                        'rgba(78, 115, 223, 0.8)',
+                        'rgba(28, 200, 138, 0.8)',
+                        'rgba(54, 185, 204, 0.8)',
+                        'rgba(246, 194, 62, 0.8)',
+                        'rgba(231, 74, 59, 0.8)',
+                        'rgba(133, 135, 150, 0.8)'
+                    ],
+                    hoverBackgroundColor: [
+                        'rgba(78, 115, 223, 1)',
+                        'rgba(28, 200, 138, 1)',
+                        'rgba(54, 185, 204, 1)',
+                        'rgba(246, 194, 62, 1)',
+                        'rgba(231, 74, 59, 1)',
+                        'rgba(133, 135, 150, 1)'
+                    ],
+                    hoverBorderColor: "rgba(234, 236, 244, 1)"
+                }]
+            },
+            options: {
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: {
+                        position: 'right',
+                    },
+                    tooltip: {
+                        callbacks: {
+                            label: function(context) {
+                                const label = context.label || '';
+                                const value = context.raw;
+                                const percentage = Math.round(context.parsed * 10) / 10;
+                                return `${label}: ${value} kWh (${percentage}%)`;
+                            }
+                        }
+                    }
+                },
+                cutout: '70%'
+            }
+        });
+
+        // Distribution view switcher
+        $('[data-distribution]').on('click', function(e) {
+            e.preventDefault();
+            $('[data-distribution]').removeClass('active');
+            $(this).addClass('active');
+            
+            const viewType = $(this).data('distribution');
+            
+            if (viewType === 'device') {
+                distributionChart.data.labels = deviceLabels;
+                distributionChart.data.datasets[0].data = deviceData;
+            } else if (viewType === 'time') {
+                const timeLabels = ['Morning (6-12)', 'Afternoon (12-18)', 'Evening (18-0)', 'Night (0-6)'];
+                const timeData = [25.6, 32.1, 52.7, 14.2];
+                distributionChart.data.labels = timeLabels;
+                distributionChart.data.datasets[0].data = timeData;
+            } else if (viewType === 'day') {
+                const dayLabels = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'];
+                const dayData = [18.2, 19.5, 20.3, 18.9, 21.5, 28.7, 25.4];
+                distributionChart.data.labels = dayLabels;
+                distributionChart.data.datasets[0].data = dayData;
+            }
+            
+            distributionChart.update();
+        });
+
+        // Initialize pattern chart
+        const patternCtx = document.getElementById('patternChart').getContext('2d');
+        const hourLabels = Array.from({length: 24}, (_, i) => `${i}:00`);
+        
+        // Example data for weekday vs weekend patterns
+        const weekdayData = [0.2, 0.1, 0.1, 0.1, 0.3, 0.5, 0.8, 1.2, 1.0, 0.9, 0.8, 0.9, 1.1, 1.0, 0.9, 1.0, 1.2, 1.5, 1.8, 1.6, 1.3, 1.0, 0.7, 0.4];
+        const weekendData = [0.3, 0.2, 0.1, 0.1, 0.1, 0.2, 0.4, 0.7, 1.0, 1.3, 1.5, 1.6, 1.7, 1.8, 1.7, 1.6, 1.7, 1.8, 1.9, 1.7, 1.5, 1.2, 0.9, 0.5];
+        
+        const patternChart = new Chart(patternCtx, {
+            type: 'line',
+            data: {
+                labels: hourLabels,
+                datasets: [
+                    {
+                        label: 'Weekday',
+                        data: weekdayData,
+                        borderColor: 'rgba(78, 115, 223, 1)',
+                        backgroundColor: 'rgba(78, 115, 223, 0.05)',
+                        pointRadius: 3,
+                        pointBackgroundColor: 'rgba(78, 115, 223, 1)',
+                        pointBorderColor: '#fff',
+                        pointHoverRadius: 5,
+                        tension: 0.3,
+                        fill: false
+                    },
+                    {
+                        label: 'Weekend',
+                        data: weekendData,
+                        borderColor: 'rgba(246, 194, 62, 1)',
+                        backgroundColor: 'rgba(246, 194, 62, 0.05)',
+                        pointRadius: 3,
+                        pointBackgroundColor: 'rgba(246, 194, 62, 1)',
+                        pointBorderColor: '#fff',
+                        pointHoverRadius: 5,
+                        tension: 0.3,
+                        fill: false
+                    }
+                ]
+            },
+            options: {
+                maintainAspectRatio: false,
+                scales: {
+                    y: {
+                        beginAtZero: true,
+                        title: {
+                            display: true,
+                            text: 'Energy (kWh)'
+                        }
+                    },
+                    x: {
+                        title: {
+                            display: true,
+                            text: 'Hour of Day'
+                        }
+                    }
+                },
+                interaction: {
+                    intersect: false,
+                    mode: 'index'
+                }
+            }
+        });
+
+        // Update report button
+        $('#updateReport').on('click', function() {
+            const dateRange = $('#dateRangePicker').val();
+            const period = $('.btn-group button.active').data('period');
+            
+            // In a real application, you would send these parameters to the server
+            // and reload the page with new data
+            
+            alert(`Updating report with:\nDate Range: ${dateRange}\nPeriod: ${period}`);
+        });
+
+        // Print report
+        $('#printReport').on('click', function() {
+            window.print();
+        });
+
+        // Export PDF
+        $('#exportPDF').on('click', function() {
+            alert('In a real application, this would generate and download a PDF report');
+        });
+    });
+</script>
+</body>
+</html>

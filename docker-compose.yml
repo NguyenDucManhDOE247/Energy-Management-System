@@ -1,0 +1,166 @@
+services:
+  api-gateway:
+    build: ./api-gateway
+    ports:
+      - "8000:8000"
+    environment:
+      - NODE_ENV=development
+      - PORT=8000
+      - JWT_SECRET=your_jwt_secret
+      - DATA_COLLECTION_URL=http://data-collection:5000
+      - DEVICE_CONTROL_URL=http://device-control:3001
+      - ANALYTICS_URL=http://analytics:3002
+      - UI_SERVICE_URL=http://ui-service:3000
+      - NOTIFICATION_URL=http://notification:3003
+      - REDIS_HOST=redis
+      - REDIS_PORT=6379
+      - MONGODB_SERVICE_URL=http://mongodb-service:3010
+    depends_on:
+      - redis
+      - data-collection
+      - device-control
+      - analytics
+      - notification
+      - mongodb-service
+    networks:
+      - ems-network
+    restart: always
+
+  data-collection:
+    build: ./data-collection
+    ports:
+      - "5000:5000"
+    environment:
+      - FLASK_ENV=development
+      - MONGO_URI=mongodb://mongodb:27017/ems-data-collection
+    depends_on:
+      - mongodb
+    networks:
+      - ems-network
+    restart: always
+
+  device-control:
+    build: ./device-control
+    ports:
+      - "3001:3001"
+    environment:
+      - NODE_ENV=development
+      - PORT=3001
+      - MONGO_URI=mongodb://mongodb:27017/ems-device-control
+      - JWT_SECRET=your_jwt_secret
+    depends_on:
+      - mongodb
+    networks:
+      - ems-network
+    restart: always
+
+  analytics:
+    build: ./analytics
+    ports:
+      - "3002:3002"
+    environment:
+      - NODE_ENV=development
+      - PORT=3002
+      - MONGO_URI=mongodb://mongodb:27017/ems-analytics
+      - JWT_SECRET=your_jwt_secret
+      - DATA_COLLECTION_URL=http://data-collection:5000
+    depends_on:
+      - mongodb
+      - data-collection
+    networks:
+      - ems-network
+    restart: always
+
+  ui-service:
+    build: ./ui-service
+    ports:
+      - "3000:3000"
+    environment:
+      - NODE_ENV=development
+      - PORT=3000
+      - API_GATEWAY_URL=http://api-gateway:8000
+      - JWT_SECRET=your_jwt_secret
+    depends_on:
+      - mongodb
+      - redis
+      - api-gateway
+    networks:
+      - ems-network
+    restart: always
+
+  notification:
+    build: ./notification
+    ports:
+      - "3003:3003"
+    environment:
+      - NODE_ENV=development
+      - PORT=3003
+      - MONGO_URI=mongodb://mongodb:27017/ems-notification
+      - JWT_SECRET=your_jwt_secret
+      - SMTP_HOST=smtp.example.com
+      - SMTP_PORT=587
+      - SMTP_USER=user@example.com
+      - SMTP_PASS=your_smtp_password
+    depends_on:
+      - mongodb
+    networks:
+      - ems-network
+    restart: always
+
+  mongodb-service:
+    build: ./mongodb
+    ports:
+      - "3010:3010"
+    environment:
+      - NODE_ENV=development
+      - PORT=3010
+      - MONGO_URI=mongodb://mongodb:27017/ems
+      - JWT_SECRET=your_jwt_secret
+    depends_on:
+      - mongodb
+    networks:
+      - ems-network
+    restart: always
+
+  mongodb:
+    image: mongo:5.0
+    ports:
+      - "27017:27017"
+    volumes:
+      - mongodb-data:/data/db
+    networks:
+      - ems-network
+    restart: always
+
+  redis:
+    image: redis:6.2-alpine
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis-data:/data
+    networks:
+      - ems-network
+    restart: always
+
+  nginx:
+    image: nginx:1.21-alpine
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - ./nginx/nginx.conf:/etc/nginx/nginx.conf:ro
+      - ./nginx/conf.d:/etc/nginx/conf.d:ro
+    depends_on:
+      - api-gateway
+      - ui-service
+    networks:
+      - ems-network
+    restart: always
+
+networks:
+  ems-network:
+    driver: bridge
+
+volumes:
+  mongodb-data:
+  redis-data:
