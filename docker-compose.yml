@@ -1,27 +1,16 @@
 services:
-  api-gateway:
-    build: ./api-gateway
+  gateway:
+    build: ./gateway
     ports:
-      - "8000:8000"
-    environment:
-      - NODE_ENV=development
-      - PORT=8000
-      - JWT_SECRET=your_jwt_secret
-      - DATA_COLLECTION_URL=http://data-collection:5000
-      - DEVICE_CONTROL_URL=http://device-control:3001
-      - ANALYTICS_URL=http://analytics:3002
-      - UI_SERVICE_URL=http://ui-service:3000
-      - NOTIFICATION_URL=http://notification:3003
-      - REDIS_HOST=redis
-      - REDIS_PORT=6379
-      - MONGODB_SERVICE_URL=http://mongodb-service:3010
+      - "80:80"
+      - "443:443"
     depends_on:
-      - redis
       - data-collection
       - device-control
       - analytics
       - notification
       - mongodb-service
+      - ui-service
     networks:
       - ems-network
     restart: always
@@ -78,12 +67,11 @@ services:
     environment:
       - NODE_ENV=development
       - PORT=3000
-      - API_GATEWAY_URL=http://api-gateway:8000
+      - API_GATEWAY_URL=http://gateway
       - JWT_SECRET=your_jwt_secret
     depends_on:
       - mongodb
       - redis
-      - api-gateway
     networks:
       - ems-network
     restart: always
@@ -138,21 +126,6 @@ services:
       - "6379:6379"
     volumes:
       - redis-data:/data
-    networks:
-      - ems-network
-    restart: always
-
-  nginx:
-    image: nginx:1.21-alpine
-    ports:
-      - "80:80"
-      - "443:443"
-    volumes:
-      - ./nginx/nginx.conf:/etc/nginx/nginx.conf:ro
-      - ./nginx/conf.d:/etc/nginx/conf.d:ro
-    depends_on:
-      - api-gateway
-      - ui-service
     networks:
       - ems-network
     restart: always

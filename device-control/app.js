@@ -23,9 +23,18 @@ const logger = winston.createLogger({
   ],
 });
 
+// Make logger available in other modules
+module.exports = { logger };
+
 // Middleware
 app.use(cors());
 app.use(express.json());
+
+// Import auth routes
+const authRoutes = require('./authRoutes');
+
+// Use auth routes
+app.use('/auth', authRoutes);
 
 // Health check endpoint
 app.get('/health', (req, res) => {

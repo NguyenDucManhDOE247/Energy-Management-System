@@ -8,7 +8,7 @@ const winston = require('winston');
 
 const app = express();
 const PORT = process.env.PORT || 3000;
-const API_GATEWAY_URL = process.env.API_GATEWAY_URL || 'http://api-gateway:8000';
+const API_GATEWAY_URL = process.env.API_GATEWAY_URL || 'http://gateway';
 
 // Configure winston logger
 const logger = winston.createLogger({
@@ -77,6 +77,9 @@ const isAuthenticated = (req, res, next) => {
 // Helper function to make authenticated API requests
 const apiRequest = async (method, url, data = null, token = null) => {
   try {
+    // Debugging info
+    logger.info(`API Request to: ${API_GATEWAY_URL}${url}`);
+    
     const config = {
       method,
       url: `${API_GATEWAY_URL}${url}`,
@@ -138,6 +141,8 @@ app.post('/login', async (req, res) => {
     }
     
     // Direct axios call to API Gateway authentication endpoint
+    logger.info(`Attempting to connect to: ${API_GATEWAY_URL}/auth/login`);
+    
     const loginResponse = await axios({
       method: 'post',
       url: `${API_GATEWAY_URL}/auth/login`,
@@ -161,7 +166,8 @@ app.post('/login', async (req, res) => {
       maxAge: 3600000 // 1 hour
     });
     
-    res.redirect('/');
+    // Redirect to dashboard with GET method
+    return res.status(200).send('<html><body><script>window.location.href = "/dashboard";</script></body></html>');
   } catch (error) {
     logger.error(`Login error: ${error.message}`);
     let errorMessage = 'Login failed. Please check your username and password.';
