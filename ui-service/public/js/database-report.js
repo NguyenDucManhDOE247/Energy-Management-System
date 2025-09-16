@@ -307,7 +307,13 @@ EMS.DatabaseReport = {
         console.error('Error loading database report data:', error);
         
         // Show error notification
-        EMS.showToast('Error', 'Failed to load report data. Please try again later.', 'danger');
+        EMS.showToast('Error', 'Failed to load report data. Using sample data instead.', 'warning');
+        
+        // Generate sample data based on chart data
+        this.generateSampleData();
+        
+        // Update UI with sample data
+        this.updateUI();
         
         // Hide loading indicator
         this.showLoading(false);
@@ -764,5 +770,65 @@ EMS.DatabaseReport = {
     if (!date) return '';
     
     return date.toISOString().split('T')[0];
+  },
+  
+  // Generate sample data for the table when API fails
+  generateSampleData: function() {
+    // Generate timestamps for the sample data (hourly intervals for the last 24 hours)
+    const now = new Date();
+    const sampleRecords = [];
+    const devices = ['Living Room', 'Kitchen', 'Bedroom', 'Office', 'Bathroom'];
+    
+    // Generate data for the chart (24 hours)
+    for (let i = 24; i >= 0; i--) {
+      const timestamp = new Date(now);
+      timestamp.setHours(timestamp.getHours() - i);
+      
+      // Power in watts (between 300 and 700)
+      const power = Math.floor(Math.random() * 400) + 300;
+      
+      // Energy in kWh (between 0.2 and 1.5)
+      const energy = Math.random() * 1.3 + 0.2;
+      
+      // Voltage (around 220-240V)
+      const voltage = Math.floor(Math.random() * 20) + 220;
+      
+      // Current in Amps
+      const current = Math.round((power / voltage) * 100) / 100;
+      
+      // Sample device
+      const device = devices[Math.floor(Math.random() * devices.length)];
+      
+      // Add to records
+      sampleRecords.push({
+        timestamp: timestamp.toISOString(),
+        device: device,
+        consumption: energy,
+        peak: power,
+        current: current,
+        voltage: voltage,
+        duration: '1 hour',
+        energy: energy
+      });
+    }
+    
+    // Calculate summary based on sample data
+    let totalEnergy = 0;
+    let peakPower = 0;
+    
+    sampleRecords.forEach(record => {
+      totalEnergy += record.consumption;
+      peakPower = Math.max(peakPower, record.peak);
+    });
+    
+    // Update data storage with sample data
+    this.data.records = sampleRecords;
+    this.data.summary = {
+      total: totalEnergy.toFixed(2),
+      average: (totalEnergy / 24).toFixed(2),
+      peak: peakPower,
+      lowest: Math.min(...sampleRecords.map(r => r.peak))
+    };
+    this.data.filtered = true;
   }
 };

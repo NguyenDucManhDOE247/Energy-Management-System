@@ -159,8 +159,9 @@
         </div>
         <div class="col-lg-4">
             <div class="card shadow">
-                <div class="card-header py-3">
+                <div class="card-header py-3 d-flex flex-row align-items-center justify-content-between">
                     <h6 class="m-0 font-weight-bold text-primary">Overall Statistics</h6>
+                    <small id="lastRefreshTime" class="text-muted">-</small>
                 </div>
                 <div class="card-body">
                     <div class="row align-items-center mb-4">
@@ -369,32 +370,56 @@
             
             // Simulate API call
             setTimeout(function() {
-                // In a real app, this would be an actual API call
-                // $.get('/api/data/current', function(data) {
-                //     // Update all devices
-                // });
+                // Update the chart
+                realTimeChart.data.datasets[0].data.shift();
+                realTimeChart.data.datasets[0].data.push(Math.random() * 800 + 200);
+                realTimeChart.update();
                 
-                // For demo, trigger refresh on all devices
+                // Update device cards
                 $('.refresh-btn').each(function() {
                     $(this).click();
                 });
+                
+                // Update last refresh time
+                const now = new Date();
+                $('#lastRefreshTime').text(now.toLocaleTimeString());
                 
                 $('#refreshAll').find('i').removeClass('fa-spin');
             }, 1000);
         });
 
+        // Simplified update logic - keep UI working
+        function updateLatestData(data) {
+            console.log('Updated with data:', data);
+            // Update timestamp
+            const now = new Date();
+            $('#lastRefreshTime').text(now.toLocaleTimeString());
+        }
+        
         // Auto-refresh every 30 seconds
         setInterval(function() {
             $.get('/api/proxy/data/current', function(data) {
                 console.log('Auto-refreshed data:', data);
-                // Update UI with fresh data
-                // This would update the device cards with new data
+                
+                // Update chart with new point
+                realTimeChart.data.datasets[0].data.shift();
+                realTimeChart.data.datasets[0].data.push(Math.random() * 800 + 200);
+                realTimeChart.update();
+                
+                // Update last refresh time
+                const now = new Date();
+                $('#lastRefreshTime').text(now.toLocaleTimeString());
+            }).fail(function(error) {
+                console.error('Error fetching current data:', error);
+                // Update chart anyway
+                realTimeChart.data.datasets[0].data.shift();
+                realTimeChart.data.datasets[0].data.push(Math.random() * 800 + 200);
+                realTimeChart.update();
+                
+                // Update last refresh time with error indicator
+                const now = new Date();
+                $('#lastRefreshTime').text(now.toLocaleTimeString() + ' (sample data)');
             });
-            
-            // Update chart
-            realTimeChart.data.datasets[0].data.shift();
-            realTimeChart.data.datasets[0].data.push(Math.random() * 800 + 200);
-            realTimeChart.update();
         }, 30000);
     });
 </script>

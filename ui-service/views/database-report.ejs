@@ -376,6 +376,56 @@
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/daterangepicker@3.1.0/daterangepicker.css">
 
 <script>
+    // Function to generate sample table data from chart data
+    function generateSampleTableData(timestamps, powerData, energyData) {
+        const devices = ['Living Room', 'Kitchen', 'Bedroom', 'Office', 'Bathroom'];
+        const deviceIds = ['DEV001', 'DEV002', 'DEV003', 'DEV004', 'DEV005'];
+        const tableData = [];
+        
+        for (let i = 0; i < timestamps.length; i++) {
+            // Calculate timestamp from the label
+            const now = new Date();
+            const parts = timestamps[i].split(':');
+            const hour = parseInt(parts[0]);
+            const minute = parseInt(parts[1]);
+            
+            const timestamp = new Date(now);
+            timestamp.setHours(hour);
+            timestamp.setMinutes(minute);
+            timestamp.setSeconds(0);
+            
+            // Use data from the chart
+            const power = powerData[i];
+            const energy = i > 0 ? energyData[i] - energyData[i-1] : energyData[0];
+            
+            // Generate sample voltage (220-240V range)
+            const voltage = Math.floor(Math.random() * 20) + 220;
+            
+            // Calculate current based on power and voltage
+            const current = (power / voltage).toFixed(2);
+            
+            // Randomly select device
+            const deviceIndex = Math.floor(Math.random() * devices.length);
+            
+            // Add to table data
+            tableData.push({
+                timestamp: timestamp.toLocaleString(),
+                device_id: deviceIds[deviceIndex],
+                device_name: devices[deviceIndex],
+                power: power.toFixed(2),
+                energy: energy.toFixed(3),
+                voltage: voltage.toFixed(1),
+                current: current,
+                state: Math.random() > 0.3 ? 'ON' : 'OFF',
+                actions: `<button class="btn btn-sm btn-info view-details" data-id="sample-${i}"><i class="fas fa-eye"></i></button>
+                         <button class="btn btn-sm btn-warning export-record" data-id="sample-${i}"><i class="fas fa-file-export"></i></button>
+                         <button class="btn btn-sm btn-danger delete-record" data-id="sample-${i}"><i class="fas fa-trash"></i></button>`
+            });
+        }
+        
+        return tableData;
+    }
+
     $(document).ready(function() {
         // Initialize DataTable
         const dataTable = $('#dataTable').DataTable({
@@ -416,6 +466,57 @@
         for (let i = 0; i < 24; i++) {
             cumulativeEnergy += powerData[i] / 1000 * (Math.random() * 0.5 + 0.5);
             energyData.push(cumulativeEnergy);
+        }
+        
+        // Generate sample table data from chart data
+        function generateTableData() {
+            const devices = ['Living Room', 'Kitchen', 'Bedroom', 'Office', 'Bathroom'];
+            const deviceIds = ['DEV001', 'DEV002', 'DEV003', 'DEV004', 'DEV005'];
+            const tableData = [];
+            
+            for (let i = 0; i < timestamps.length; i++) {
+                const now = new Date();
+                const timeStr = timestamps[i];
+                const parts = timeStr.split(':');
+                const hour = parseInt(parts[0]);
+                const minute = parseInt(parts[1] || 0);
+                
+                const timestamp = new Date(now);
+                timestamp.setHours(hour);
+                timestamp.setMinutes(minute);
+                
+                // Random device
+                const deviceIndex = Math.floor(Math.random() * devices.length);
+                const deviceName = devices[deviceIndex];
+                const deviceId = deviceIds[deviceIndex];
+                
+                // Use data from chart
+                const power = powerData[i];
+                const energy = energyData[i] > 0 ? (i > 0 ? energyData[i] - energyData[i-1] : energyData[0]) : 0.1;
+                
+                // Random voltage between 220-240V
+                const voltage = Math.floor(Math.random() * 20) + 220;
+                
+                // Calculate current based on power and voltage
+                const current = (power / voltage).toFixed(2);
+                
+                // Add to table data
+                tableData.push([
+                    timestamp.toLocaleString(),
+                    deviceId,
+                    deviceName,
+                    power.toFixed(1),
+                    energy.toFixed(3),
+                    voltage.toFixed(1),
+                    current,
+                    Math.random() > 0.2 ? '<span class="badge badge-success">ON</span>' : '<span class="badge badge-danger">OFF</span>',
+                    '<button class="btn btn-sm btn-info view-details" data-id="sample-' + i + '"><i class="fas fa-eye"></i></button> ' +
+                    '<button class="btn btn-sm btn-warning export-record" data-id="sample-' + i + '"><i class="fas fa-file-export"></i></button> ' +
+                    '<button class="btn btn-sm btn-danger delete-record" data-id="sample-' + i + '"><i class="fas fa-trash"></i></button>'
+                ]);
+            }
+            
+            return tableData;
         }
         
         const dataChart = new Chart(ctx, {
@@ -593,28 +694,34 @@
                 // and update the table and chart
                 
                 // Update chart with new random data
-                dataChart.data.datasets[0].data = Array(24).fill(0).map(() => Math.floor(Math.random() * 500 + 200));
+                const newPowerData = Array(24).fill(0).map(() => Math.floor(Math.random() * 500 + 200));
+                dataChart.data.datasets[0].data = newPowerData;
                 
                 // Reset cumulative energy and recalculate
-                cumulativeEnergy = 0;
+                let newCumulativeEnergy = 0;
                 const newEnergyData = [];
                 
                 for (let i = 0; i < 24; i++) {
-                    cumulativeEnergy += dataChart.data.datasets[0].data[i] / 1000 * (Math.random() * 0.5 + 0.5);
-                    newEnergyData.push(cumulativeEnergy);
+                    newCumulativeEnergy += newPowerData[i] / 1000 * (Math.random() * 0.5 + 0.5);
+                    newEnergyData.push(newCumulativeEnergy);
                 }
                 
                 dataChart.data.datasets[1].data = newEnergyData;
                 dataChart.update();
                 
                 // Update summary statistics
-                $('#totalEnergy').text(cumulativeEnergy.toFixed(2) + ' kWh');
+                $('#totalEnergy').text(newCumulativeEnergy.toFixed(2) + ' kWh');
                 
-                const avgPower = dataChart.data.datasets[0].data.reduce((sum, val) => sum + val, 0) / 24;
+                const avgPower = newPowerData.reduce((sum, val) => sum + val, 0) / 24;
                 $('#avgPower').text(avgPower.toFixed(2) + ' W');
                 
-                const peakPower = Math.max(...dataChart.data.datasets[0].data);
+                const peakPower = Math.max(...newPowerData);
                 $('#peakPower').text(peakPower.toFixed(2) + ' W');
+                
+                // Update table with new data that matches the chart
+                const newTableData = generateTableData();
+                dataTable.clear();
+                dataTable.rows.add(newTableData).draw();
                 
                 $('#refreshData').find('i').removeClass('fa-spin');
                 
@@ -643,6 +750,60 @@
             $('#deviceFilter').val('');
             $('#dataType').val('all');
             $('#aggregation').val('none');
+        });
+        
+        // Fill the table with sample data immediately
+        const tableData = generateTableData();
+        dataTable.rows.add(tableData).draw();
+        
+        // Set up event handlers for the dynamically added buttons
+        $('#dataTable').on('click', '.view-details', function() {
+            const id = $(this).data('id');
+            const row = $(this).closest('tr');
+            const cells = row.find('td');
+            
+            $('#modal-timestamp').val($(cells[0]).text());
+            $('#modal-device-id').val($(cells[1]).text());
+            $('#modal-device-name').val($(cells[2]).text());
+            $('#modal-power').val($(cells[3]).text());
+            $('#modal-energy').val($(cells[4]).text());
+            $('#modal-voltage').val($(cells[5]).text());
+            $('#modal-current').val($(cells[6]).text());
+            $('#modal-status').val($(cells[7]).text().trim() === 'ON' ? 'ON' : 'OFF');
+            
+            // Sample raw data
+            const rawData = {
+                _id: id,
+                timestamp: $(cells[0]).text(),
+                device_id: $(cells[1]).text(),
+                device_name: $(cells[2]).text(),
+                power: parseFloat($(cells[3]).text()),
+                energy: parseFloat($(cells[4]).text()),
+                voltage: parseFloat($(cells[5]).text()),
+                current: parseFloat($(cells[6]).text()),
+                state: $(cells[7]).text().trim() === 'ON',
+                metadata: {
+                    ip_address: "192.168.1." + Math.floor(Math.random() * 255),
+                    firmware_version: "1.2.3",
+                    location: "Office Room"
+                }
+            };
+            
+            $('#modal-raw-data').text(JSON.stringify(rawData, null, 2));
+            $('#modal-export').data('id', id);
+            
+            $('#recordDetailsModal').modal('show');
+        });
+        
+        $('#dataTable').on('click', '.delete-record', function() {
+            const id = $(this).data('id');
+            $('#confirmDelete').data('id', id);
+            $('#deleteConfirmModal').modal('show');
+        });
+        
+        $('#dataTable').on('click', '.export-record', function() {
+            const id = $(this).data('id');
+            alert(`Exporting record ${id} - In a real application, this would download a CSV or JSON file`);
         });
     });
 </script>
