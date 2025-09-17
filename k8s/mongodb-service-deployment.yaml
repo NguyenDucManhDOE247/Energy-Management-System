@@ -1,30 +1,29 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: ui-service
+  name: mongodb-service
   namespace: ems
 spec:
-  replicas: 2
   selector:
     matchLabels:
-      app: ui-service
+      app: mongodb-service
   template:
     metadata:
       labels:
-        app: ui-service
+        app: mongodb-service
     spec:
       containers:
-      - name: ui-service
-        image: nguyenducmanh247/energy-ui-service:latest
+      - name: mongodb-service
+        image: nguyenducmanh247/energy-mongodb:latest
         ports:
-        - containerPort: 3000
+        - containerPort: 3010
         env:
         - name: NODE_ENV
           value: "production"
         - name: PORT
-          value: "3000"
-        - name: API_GATEWAY_URL
-          value: "http://gateway:80"
+          value: "3010"
+        - name: MONGO_URI
+          value: "mongodb://mongodb:27017/ems"
         - name: JWT_SECRET
           valueFrom:
             secretKeyRef:
@@ -32,20 +31,20 @@ spec:
               key: jwt-secret
         livenessProbe:
           httpGet:
-            path: /login
-            port: 3000
+            path: /health
+            port: 3010
           initialDelaySeconds: 30
           periodSeconds: 10
         readinessProbe:
           httpGet:
-            path: /login
-            port: 3000
+            path: /health
+            port: 3010
           initialDelaySeconds: 5
           periodSeconds: 5
         resources:
           limits:
             cpu: "300m"
-            memory: "384Mi"
+            memory: "256Mi"
           requests:
             cpu: "100m"
             memory: "128Mi"
