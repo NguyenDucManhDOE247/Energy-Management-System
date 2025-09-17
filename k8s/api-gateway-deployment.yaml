@@ -15,7 +15,7 @@ spec:
     spec:
       containers:
       - name: api-gateway
-        image: ${DOCKER_REGISTRY}/ems-api-gateway:latest
+        image: nguyenducmanh247/energy-gateway:latest
         ports:
         - containerPort: 8000
         env:

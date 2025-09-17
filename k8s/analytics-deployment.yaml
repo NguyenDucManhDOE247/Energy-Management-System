@@ -15,7 +15,7 @@ spec:
     spec:
       containers:
       - name: analytics
-        image: ${DOCKER_REGISTRY}/ems-analytics:latest
+        image: nguyenducmanh247/energy-analytics:latest
         ports:
         - containerPort: 3002
         env:

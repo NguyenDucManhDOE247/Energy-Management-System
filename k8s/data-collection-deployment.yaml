@@ -15,7 +15,7 @@ spec:
     spec:
       containers:
       - name: data-collection
-        image: ${DOCKER_REGISTRY}/ems-data-collection:latest
+        image: nguyenducmanh247/energy-data-collection:latest
         ports:
         - containerPort: 5000
         env:
