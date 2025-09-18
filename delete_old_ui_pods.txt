@@ -1,0 +1,1 @@
+"kubectl delete pod ui-service-578bc675b5-ph4fx ui-service-578bc675b5-q2qg5 ui-service-7d758b67fd-rsql2 -n ems" 
