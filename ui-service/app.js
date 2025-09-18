@@ -35,6 +35,7 @@ app.set('view engine', 'ejs');
 app.set('views', path.join(__dirname, 'views'));
 
 // Static files
+app.use(express.static(path.join(__dirname, 'public'))); // Serve all static files from public directory
 app.use('/assets', express.static(path.join(__dirname, 'public', 'assets')));
 app.use('/components', express.static(path.join(__dirname, 'public', 'components')));
 app.use('/ico', express.static(path.join(__dirname, 'public', 'ico')));
