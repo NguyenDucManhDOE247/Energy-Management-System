@@ -37,6 +37,21 @@ app.set('views', path.join(__dirname, 'views'));
 // Static files
 app.use('/assets', express.static(path.join(__dirname, 'public', 'assets')));
 app.use('/components', express.static(path.join(__dirname, 'public', 'components')));
+app.use('/ico', express.static(path.join(__dirname, 'public', 'ico')));
+app.use('/favicon.ico', express.static(path.join(__dirname, 'public', 'ico', 'favicon.ico')));
+
+// Add global variables for icon paths
+app.use((req, res, next) => {
+  res.locals.iconPath = '/assets/icons/';
+  res.locals.icoPath = '/ico/';
+  
+  // Helper function to easily use icons in templates
+  res.locals.icon = (name, width = 16, height = 16) => {
+    return `<img src="/assets/icons/${name}" alt="${name.split('.')[0]}" width="${width}" height="${height}">`;
+  };
+  
+  next();
+});
 
 // Health check endpoint
 app.get('/health', (req, res) => {
