@@ -23,14 +23,18 @@ spec:
           httpGet:
             path: /nginx_status
             port: 80
-          initialDelaySeconds: 30
-          periodSeconds: 10
+          initialDelaySeconds: 60
+          periodSeconds: 15
+          timeoutSeconds: 3
+          failureThreshold: 5
         readinessProbe:
           httpGet:
             path: /nginx_status
             port: 80
-          initialDelaySeconds: 5
-          periodSeconds: 5
+          initialDelaySeconds: 30
+          periodSeconds: 10
+          timeoutSeconds: 3
+          failureThreshold: 3
         resources:
           limits:
             cpu: "500m"
