@@ -32,3 +32,5 @@ def verifyDeployment() {
     sh 'kubectl get pods -n ems'
     sh 'kubectl get services -n ems'
 }
+
+return this
