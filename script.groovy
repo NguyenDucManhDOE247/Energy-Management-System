@@ -10,8 +10,8 @@ def buildAndPushDockerImages() {
         def services = ["analytics", "data-collection", "device-control", "gateway", "mongodb", "notification", "ui-service"]
         services.each { svc ->
             echo "Building and pushing image for: ${svc}"
-            sh "docker build -t ems-${svc}:${IMAGE_TAG} ./${svc}"
-            sh "docker push ems-${svc}:${IMAGE_TAG}"
+            sh "docker build -t ${DOCKER_HUB_USER}/energy-${svc}:${IMAGE_TAG} ./${svc}"
+            sh "docker push ${DOCKER_HUB_USER}/energy-${svc}:${IMAGE_TAG}"
         }
     }
 }
