@@ -15,7 +15,7 @@ spec:
     spec:
       containers:
         - name: notification
-          image: ems-notification:latest
+          image: nguyenducmanh247/ems-notification:latest
           ports:
             - containerPort: 3003
           env:

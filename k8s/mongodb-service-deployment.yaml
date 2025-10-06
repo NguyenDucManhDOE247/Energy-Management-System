@@ -14,7 +14,7 @@ spec:
     spec:
       containers:
         - name: mongodb-service
-          image: ems-mongodb:latest
+          image: nguyenducmanh247/ems-mongodb:latest
           ports:
             - containerPort: 3010
           env:

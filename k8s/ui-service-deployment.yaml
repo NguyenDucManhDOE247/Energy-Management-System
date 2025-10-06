@@ -15,7 +15,7 @@ spec:
     spec:
       containers:
         - name: ui-service
-          image: ems-ui-service:latest
+          image: nguyenducmanh247/ems-ui-service:latest
           ports:
             - containerPort: 3000
           env:
