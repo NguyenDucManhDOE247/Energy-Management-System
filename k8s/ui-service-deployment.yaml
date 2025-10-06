@@ -14,38 +14,38 @@ spec:
         app: ui-service
     spec:
       containers:
-      - name: ui-service
-        image: nguyenducmanh247/energy-ui-service:latest
-        ports:
-        - containerPort: 3000
-        env:
-        - name: NODE_ENV
-          value: "production"
-        - name: PORT
-          value: "3000"
-        - name: API_GATEWAY_URL
-          value: "http://gateway:80"
-        - name: JWT_SECRET
-          valueFrom:
-            secretKeyRef:
-              name: ems-secrets
-              key: jwt-secret
-        livenessProbe:
-          httpGet:
-            path: /login
-            port: 3000
-          initialDelaySeconds: 30
-          periodSeconds: 10
-        readinessProbe:
-          httpGet:
-            path: /login
-            port: 3000
-          initialDelaySeconds: 5
-          periodSeconds: 5
-        resources:
-          limits:
-            cpu: "300m"
-            memory: "384Mi"
-          requests:
-            cpu: "100m"
-            memory: "128Mi"
+        - name: ui-service
+          image: ems-ui-service:latest
+          ports:
+            - containerPort: 3000
+          env:
+            - name: NODE_ENV
+              value: "production"
+            - name: PORT
+              value: "3000"
+            - name: API_GATEWAY_URL
+              value: "http://gateway:80"
+            - name: JWT_SECRET
+              valueFrom:
+                secretKeyRef:
+                  name: ems-secrets
+                  key: jwt-secret
+          livenessProbe:
+            httpGet:
+              path: /login
+              port: 3000
+            initialDelaySeconds: 30
+            periodSeconds: 10
+          readinessProbe:
+            httpGet:
+              path: /login
+              port: 3000
+            initialDelaySeconds: 5
+            periodSeconds: 5
+          resources:
+            limits:
+              cpu: "300m"
+              memory: "384Mi"
+            requests:
+              cpu: "100m"
+              memory: "128Mi"

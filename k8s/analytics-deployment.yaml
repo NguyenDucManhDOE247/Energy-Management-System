@@ -14,40 +14,40 @@ spec:
         app: analytics
     spec:
       containers:
-      - name: analytics
-        image: nguyenducmanh247/energy-analytics:latest
-        ports:
-        - containerPort: 3002
-        env:
-        - name: NODE_ENV
-          value: "production"
-        - name: PORT
-          value: "3002"
-        - name: MONGO_URI
-          value: "mongodb://mongodb:27017/ems-analytics"
-        - name: JWT_SECRET
-          valueFrom:
-            secretKeyRef:
-              name: ems-secrets
-              key: jwt-secret
-        - name: DATA_COLLECTION_URL
-          value: "http://data-collection:5000"
-        livenessProbe:
-          httpGet:
-            path: /health
-            port: 3002
-          initialDelaySeconds: 30
-          periodSeconds: 10
-        readinessProbe:
-          httpGet:
-            path: /health
-            port: 3002
-          initialDelaySeconds: 5
-          periodSeconds: 5
-        resources:
-          limits:
-            cpu: "500m"
-            memory: "512Mi"
-          requests:
-            cpu: "100m"
-            memory: "256Mi"
+        - name: analytics
+          image: ems-analytics:latest
+          ports:
+            - containerPort: 3002
+          env:
+            - name: NODE_ENV
+              value: "production"
+            - name: PORT
+              value: "3002"
+            - name: MONGO_URI
+              value: "mongodb://mongodb:27017/ems-analytics"
+            - name: JWT_SECRET
+              valueFrom:
+                secretKeyRef:
+                  name: ems-secrets
+                  key: jwt-secret
+            - name: DATA_COLLECTION_URL
+              value: "http://data-collection:5000"
+          livenessProbe:
+            httpGet:
+              path: /health
+              port: 3002
+            initialDelaySeconds: 30
+            periodSeconds: 10
+          readinessProbe:
+            httpGet:
+              path: /health
+              port: 3002
+            initialDelaySeconds: 5
+            periodSeconds: 5
+          resources:
+            limits:
+              cpu: "500m"
+              memory: "512Mi"
+            requests:
+              cpu: "100m"
+              memory: "256Mi"

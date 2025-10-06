@@ -1,6 +1,6 @@
 services:
   gateway:
-    image: nguyenducmanh247/energy-gateway:latest
+    image: ems-gateway:latest
     ports:
       - "80:80"
       - "443:443"
@@ -16,7 +16,7 @@ services:
     restart: always
 
   data-collection:
-    image: nguyenducmanh247/energy-data-collection:latest
+    image: ems-data-collection:latest
     ports:
       - "5000:5000"
     environment:
@@ -29,7 +29,7 @@ services:
     restart: always
 
   device-control:
-    image: nguyenducmanh247/energy-device-control:latest
+    image: ems-device-control:latest
     ports:
       - "3001:3001"
     environment:
@@ -44,7 +44,7 @@ services:
     restart: always
 
   analytics:
-    image: nguyenducmanh247/energy-analytics:latest
+    image: ems-analytics:latest
     ports:
       - "3002:3002"
     environment:
@@ -61,7 +61,7 @@ services:
     restart: always
 
   ui-service:
-    image: nguyenducmanh247/energy-ui-service:latest
+    image: ems-ui-service:latest
     ports:
       - "3000:3000"
     environment:
@@ -77,7 +77,7 @@ services:
     restart: always
 
   notification:
-    image: nguyenducmanh247/energy-notification:latest
+    image: ems-notification:latest
     ports:
       - "3003:3003"
     environment:
@@ -96,7 +96,7 @@ services:
     restart: always
 
   mongodb-service:
-    image: nguyenducmanh247/energy-mongodb:latest
+    image: ems-mongodb:latest
     ports:
       - "3010:3010"
     environment:

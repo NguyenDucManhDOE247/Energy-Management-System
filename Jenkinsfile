@@ -4,7 +4,6 @@ pipeline {
     agent any
     
     environment {
-        DOCKER_HUB_USER = "nguyenducmanh247"
         IMAGE_TAG = "latest"
         K8S_PATH = "k8s"
     }

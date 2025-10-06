@@ -13,38 +13,38 @@ spec:
         app: mongodb-service
     spec:
       containers:
-      - name: mongodb-service
-        image: nguyenducmanh247/energy-mongodb:latest
-        ports:
-        - containerPort: 3010
-        env:
-        - name: NODE_ENV
-          value: "production"
-        - name: PORT
-          value: "3010"
-        - name: MONGO_URI
-          value: "mongodb://mongodb:27017/ems"
-        - name: JWT_SECRET
-          valueFrom:
-            secretKeyRef:
-              name: ems-secrets
-              key: jwt-secret
-        livenessProbe:
-          httpGet:
-            path: /health
-            port: 3010
-          initialDelaySeconds: 30
-          periodSeconds: 10
-        readinessProbe:
-          httpGet:
-            path: /health
-            port: 3010
-          initialDelaySeconds: 5
-          periodSeconds: 5
-        resources:
-          limits:
-            cpu: "300m"
-            memory: "256Mi"
-          requests:
-            cpu: "100m"
-            memory: "128Mi"
+        - name: mongodb-service
+          image: ems-mongodb:latest
+          ports:
+            - containerPort: 3010
+          env:
+            - name: NODE_ENV
+              value: "production"
+            - name: PORT
+              value: "3010"
+            - name: MONGO_URI
+              value: "mongodb://mongodb:27017/ems"
+            - name: JWT_SECRET
+              valueFrom:
+                secretKeyRef:
+                  name: ems-secrets
+                  key: jwt-secret
+          livenessProbe:
+            httpGet:
+              path: /health
+              port: 3010
+            initialDelaySeconds: 30
+            periodSeconds: 10
+          readinessProbe:
+            httpGet:
+              path: /health
+              port: 3010
+            initialDelaySeconds: 5
+            periodSeconds: 5
+          resources:
+            limits:
+              cpu: "300m"
+              memory: "256Mi"
+            requests:
+              cpu: "100m"
+              memory: "128Mi"

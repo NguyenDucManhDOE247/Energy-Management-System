@@ -14,31 +14,31 @@ spec:
         app: gateway
     spec:
       containers:
-      - name: gateway
-        image: nguyenducmanh247/energy-gateway:latest
-        ports:
-        - containerPort: 80
-        - containerPort: 443
-        livenessProbe:
-          httpGet:
-            path: /nginx_status
-            port: 80
-          initialDelaySeconds: 60
-          periodSeconds: 15
-          timeoutSeconds: 3
-          failureThreshold: 5
-        readinessProbe:
-          httpGet:
-            path: /nginx_status
-            port: 80
-          initialDelaySeconds: 30
-          periodSeconds: 10
-          timeoutSeconds: 3
-          failureThreshold: 3
-        resources:
-          limits:
-            cpu: "500m"
-            memory: "256Mi"
-          requests:
-            cpu: "100m"
-            memory: "128Mi"
+        - name: gateway
+          image: ems-gateway:latest
+          ports:
+            - containerPort: 80
+            - containerPort: 443
+          livenessProbe:
+            httpGet:
+              path: /nginx_status
+              port: 80
+            initialDelaySeconds: 60
+            periodSeconds: 15
+            timeoutSeconds: 3
+            failureThreshold: 5
+          readinessProbe:
+            httpGet:
+              path: /nginx_status
+              port: 80
+            initialDelaySeconds: 30
+            periodSeconds: 10
+            timeoutSeconds: 3
+            failureThreshold: 3
+          resources:
+            limits:
+              cpu: "500m"
+              memory: "256Mi"
+            requests:
+              cpu: "100m"
+              memory: "128Mi"

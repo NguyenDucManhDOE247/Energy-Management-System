@@ -14,58 +14,58 @@ spec:
         app: notification
     spec:
       containers:
-      - name: notification
-        image: nguyenducmanh247/energy-notification:latest
-        ports:
-        - containerPort: 3003
-        env:
-        - name: NODE_ENV
-          value: "production"
-        - name: PORT
-          value: "3003"
-        - name: MONGO_URI
-          value: "mongodb://mongodb:27017/ems-notification"
-        - name: JWT_SECRET
-          valueFrom:
-            secretKeyRef:
-              name: ems-secrets
-              key: jwt-secret
-        - name: SMTP_HOST
-          valueFrom:
-            secretKeyRef:
-              name: ems-secrets
-              key: smtp-host
-        - name: SMTP_PORT
-          valueFrom:
-            secretKeyRef:
-              name: ems-secrets
-              key: smtp-port
-        - name: SMTP_USER
-          valueFrom:
-            secretKeyRef:
-              name: ems-secrets
-              key: smtp-user
-        - name: SMTP_PASS
-          valueFrom:
-            secretKeyRef:
-              name: ems-secrets
-              key: smtp-pass
-        livenessProbe:
-          httpGet:
-            path: /health
-            port: 3003
-          initialDelaySeconds: 30
-          periodSeconds: 10
-        readinessProbe:
-          httpGet:
-            path: /health
-            port: 3003
-          initialDelaySeconds: 5
-          periodSeconds: 5
-        resources:
-          limits:
-            cpu: "300m"
-            memory: "384Mi"
-          requests:
-            cpu: "100m"
-            memory: "128Mi"
+        - name: notification
+          image: ems-notification:latest
+          ports:
+            - containerPort: 3003
+          env:
+            - name: NODE_ENV
+              value: "production"
+            - name: PORT
+              value: "3003"
+            - name: MONGO_URI
+              value: "mongodb://mongodb:27017/ems-notification"
+            - name: JWT_SECRET
+              valueFrom:
+                secretKeyRef:
+                  name: ems-secrets
+                  key: jwt-secret
+            - name: SMTP_HOST
+              valueFrom:
+                secretKeyRef:
+                  name: ems-secrets
+                  key: smtp-host
+            - name: SMTP_PORT
+              valueFrom:
+                secretKeyRef:
+                  name: ems-secrets
+                  key: smtp-port
+            - name: SMTP_USER
+              valueFrom:
+                secretKeyRef:
+                  name: ems-secrets
+                  key: smtp-user
+            - name: SMTP_PASS
+              valueFrom:
+                secretKeyRef:
+                  name: ems-secrets
+                  key: smtp-pass
+          livenessProbe:
+            httpGet:
+              path: /health
+              port: 3003
+            initialDelaySeconds: 30
+            periodSeconds: 10
+          readinessProbe:
+            httpGet:
+              path: /health
+              port: 3003
+            initialDelaySeconds: 5
+            periodSeconds: 5
+          resources:
+            limits:
+              cpu: "300m"
+              memory: "384Mi"
+            requests:
+              cpu: "100m"
+              memory: "128Mi"
