@@ -111,7 +111,7 @@ services:
     restart: always
 
   mongodb:
-    image: mongo:5.0
+    image: mongo:8.0-noble
     ports:
       - "27017:27017"
     volumes:
@@ -121,7 +121,7 @@ services:
     restart: always
 
   redis:
-    image: redis:6.2-alpine
+    image: redis:8.2-alpine
     ports:
       - "6379:6379"
     volumes:

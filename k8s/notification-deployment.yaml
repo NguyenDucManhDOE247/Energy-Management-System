@@ -4,7 +4,7 @@ metadata:
   name: notification
   namespace: ems
 spec:
-  replicas: 1
+  replicas: 2
   selector:
     matchLabels:
       app: notification
@@ -54,18 +54,35 @@ spec:
             httpGet:
               path: /health
               port: 3003
-            initialDelaySeconds: 30
-            periodSeconds: 10
+            initialDelaySeconds: 5
+            timeoutSeconds: 5
+            periodSeconds: 5
           readinessProbe:
             httpGet:
               path: /health
               port: 3003
             initialDelaySeconds: 5
+            timeoutSeconds: 5
             periodSeconds: 5
           resources:
-            limits:
-              cpu: "300m"
-              memory: "384Mi"
             requests:
-              cpu: "100m"
-              memory: "128Mi"
+              cpu: 100m
+              memory: 64Mi
+            limits:
+              cpu: 200m
+              memory: 128Mi
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: notification
+  namespace: ems
+spec:
+  type: ClusterIP
+  selector:
+    app: notification
+  ports:
+  - protocol: TCP 
+    port: 3003
+    targetPort: 3003

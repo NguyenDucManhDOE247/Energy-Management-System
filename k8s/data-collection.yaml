@@ -4,7 +4,7 @@ metadata:
   name: data-collection
   namespace: ems
 spec:
-  replicas: 1
+  replicas: 2
   selector:
     matchLabels:
       app: data-collection
@@ -27,18 +27,35 @@ spec:
             httpGet:
               path: /health
               port: 5000
-            initialDelaySeconds: 30
-            periodSeconds: 10
+            initialDelaySeconds: 5
+            timeoutSeconds: 5
+            periodSeconds: 5
           readinessProbe:
             httpGet:
               path: /health
               port: 5000
             initialDelaySeconds: 5
+            timeoutSeconds: 5
             periodSeconds: 5
           resources:
-            limits:
-              cpu: "500m"
-              memory: "512Mi"
             requests:
-              cpu: "100m"
-              memory: "256Mi"
+              cpu: 100m
+              memory: 64Mi
+            limits:
+              cpu: 200m
+              memory: 128Mi
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: data-collection
+  namespace: ems
+spec:
+  type: ClusterIP
+  selector:
+    app: data-collection
+  ports:
+  - protocol: TCP  
+    port: 5000
+    targetPort: 5000

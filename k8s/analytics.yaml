@@ -4,7 +4,7 @@ metadata:
   name: analytics
   namespace: ems
 spec:
-  replicas: 1
+  replicas: 2
   selector:
     matchLabels:
       app: analytics
@@ -36,18 +36,36 @@ spec:
             httpGet:
               path: /health
               port: 3002
-            initialDelaySeconds: 30
-            periodSeconds: 10
+            initialDelaySeconds: 5
+            timeoutSeconds: 5
+            periodSeconds: 5
           readinessProbe:
             httpGet:
               path: /health
               port: 3002
             initialDelaySeconds: 5
+            timeoutSeconds: 5
             periodSeconds: 5
           resources:
-            limits:
-              cpu: "500m"
-              memory: "512Mi"
             requests:
-              cpu: "100m"
-              memory: "256Mi"
+              cpu: 100m
+              memory: 64Mi
+            limits:
+              cpu: 200m
+              memory: 128Mi
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: analytics
+  namespace: ems
+spec:
+  type: ClusterIP
+  selector:
+    app: analytics
+  ports:
+  - protocol: TCP
+    port: 3002
+    targetPort: 3002
+

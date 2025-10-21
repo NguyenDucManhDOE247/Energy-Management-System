@@ -1,46 +1,34 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: mongodb-service
+  name: gateway
   namespace: ems
 spec:
   replicas: 2
   selector:
     matchLabels:
-      app: mongodb-service
+      app: gateway
   template:
     metadata:
       labels:
-        app: mongodb-service
+        app: gateway
     spec:
       containers:
-        - name: mongodb-service
-          image: nguyenducmanh247/ems-mongodb:latest
+        - name: gateway
+          image: nguyenducmanh247/ems-gateway:latest
           ports:
-            - containerPort: 3010
-          env:
-            - name: NODE_ENV
-              value: "production"
-            - name: PORT
-              value: "3010"
-            - name: MONGO_URI
-              value: "mongodb://mongodb:27017/ems"
-            - name: JWT_SECRET
-              valueFrom:
-                secretKeyRef:
-                  name: ems-secrets
-                  key: jwt-secret
+            - containerPort: 80
           livenessProbe:
             httpGet:
               path: /health
-              port: 3010
+              port: 3002
             initialDelaySeconds: 5
             timeoutSeconds: 5
             periodSeconds: 5
           readinessProbe:
             httpGet:
               path: /health
-              port: 3010
+              port: 3002
             initialDelaySeconds: 5
             timeoutSeconds: 5
             periodSeconds: 5
@@ -56,13 +44,13 @@ spec:
 apiVersion: v1
 kind: Service
 metadata:
-  name: mongodb-service
+  name: gateway
   namespace: ems
 spec:
-  type: ClusterIP
+  type: LoadBalancer
   selector:
-    app: mongodb-service
+    app: gateway
   ports:
   - protocol: TCP
-    port: 3010
-    targetPort: 3010
+    port: 80
+    targetPort: 80
