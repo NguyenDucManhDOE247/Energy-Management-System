@@ -32,27 +32,6 @@ spec:
                   key: jwt-secret
             - name: DATA_COLLECTION_URL
               value: "http://data-collection:5000"
-          livenessProbe:
-            httpGet:
-              path: /health
-              port: 3002
-            initialDelaySeconds: 5
-            timeoutSeconds: 5
-            periodSeconds: 5
-          readinessProbe:
-            httpGet:
-              path: /health
-              port: 3002
-            initialDelaySeconds: 5
-            timeoutSeconds: 5
-            periodSeconds: 5
-          resources:
-            requests:
-              cpu: 100m
-              memory: 64Mi
-            limits:
-              cpu: 200m
-              memory: 128Mi
 
 ---
 apiVersion: v1

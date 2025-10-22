@@ -17,28 +17,7 @@ spec:
       - name: redis
         image: redis:8.2-alpine
         ports:
-        - containerPort: 6379
-        livenessProbe:
-          httpGet:
-            path: /health
-            port: 3002
-          initialDelaySeconds: 5
-          timeoutSeconds: 5
-          periodSeconds: 5
-        readinessProbe:
-          httpGet:
-            path: /health
-            port: 3002
-          initialDelaySeconds: 5
-          timeoutSeconds: 5
-          periodSeconds: 5
-        resources:
-          requests:
-            cpu: 100m
-            memory: 64Mi
-          limits:
-            cpu: 200m
-            memory: 128Mi     
+        - containerPort: 6379    
         volumeMounts:
         - name: redis-data
           mountPath: /data

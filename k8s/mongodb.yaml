@@ -15,30 +15,9 @@ spec:
     spec:
       containers:
       - name: mongodb
-        image: mongo:6.0
+        image: mongo:8.0-noble
         ports:
-        - containerPort: 27017
-        livenessProbe:
-          httpGet:
-            path: /health
-            port: 3002
-          initialDelaySeconds: 5
-          timeoutSeconds: 5
-          periodSeconds: 5
-        readinessProbe:
-          httpGet:
-            path: /health
-            port: 3002
-          initialDelaySeconds: 5
-          timeoutSeconds: 5
-          periodSeconds: 5
-        resources:
-          requests:
-            cpu: 200m
-            memory: 128Mi
-          limits:
-            cpu: 400m
-            memory: 256Mi       
+        - containerPort: 27017   
         volumeMounts:
         - name: mongodb-data
           mountPath: /data/db
@@ -47,7 +26,6 @@ spec:
         persistentVolumeClaim:
           claimName: mongodb-pvc
       
-
 ---
 apiVersion: v1
 kind: Service

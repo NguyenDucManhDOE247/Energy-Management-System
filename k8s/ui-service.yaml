@@ -30,27 +30,6 @@ spec:
                 secretKeyRef:
                   name: ems-secrets
                   key: jwt-secret
-          livenessProbe:
-            httpGet:
-              path: /login
-              port: 3000
-            initialDelaySeconds: 5
-            timeoutSeconds: 5
-            periodSeconds: 5
-          readinessProbe:
-            httpGet:
-              path: /login
-              port: 3000
-            initialDelaySeconds: 5
-            timeoutSeconds: 5
-            periodSeconds: 5
-          resources:
-            requests:
-              cpu: 100m
-              memory: 64Mi
-            limits:
-              cpu: 200m
-              memory: 128Mi
 
 ---
 apiVersion: v1
