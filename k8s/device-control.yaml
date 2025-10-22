@@ -4,7 +4,7 @@ metadata:
   name: device-control
   namespace: ems
 spec:
-  replicas: 1
+  replicas: 2
   selector:
     matchLabels:
       app: device-control
